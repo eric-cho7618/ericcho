@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAT 연습 시험 센터</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a1628;
+    --navy2: #0f2040;
+    --blue: #1a4a8a;
+    --accent: #e8a020;
+    --accent2: #f0c060;
+    --green: #2d8a5e;
+    --red: #c0392b;
+    --light: #f5f0e8;
+    --white: #ffffff;
+    --gray: #8a9ab0;
+    --border: rgba(255,255,255,0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* === BACKGROUND === */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(26,74,138,0.35) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 80%, rgba(232,160,32,0.12) 0%, transparent 50%),
+      repeating-linear-gradient(90deg, transparent, transparent 79px, rgba(255,255,255,0.02) 80px),
+      repeating-linear-gradient(0deg, transparent, transparent 79px, rgba(255,255,255,0.02) 80px);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* === SCREENS === */
+  .screen { display: none; position: relative; z-index: 1; }
+  .screen.active { display: block; }
+
+  /* ===== HOME ===== */
+  #homeScreen {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+  }
+
+  header {
+    padding: 28px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--accent); }
+
+  .badge {
+    background: rgba(232,160,32,0.15);
+    border: 1px solid rgba(232,160,32,0.4);
+    color: var(--accent2);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .hero {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 60px 48px 40px;
+    text-align: center;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    margin-bottom: 20px;
+    max-width: 800px;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .hero p {
+    font-size: 1.1rem;
+    color: var(--gray);
+    max-width: 520px;
+    line-height: 1.7;
+    margin-bottom: 50px;
+  }
+
+  /* Section cards */
+  .section-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    max-width: 960px;
+    width: 100%;
+    margin-bottom: 40px;
+  }
+
+  .section-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 28px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    text-align: left;
+  }
+  .section-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--card-color, var(--accent));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .section-card:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.2);
+    transform: translateY(-3px);
+  }
+  .section-card:hover::before { opacity: 1; }
+
+  .card-icon {
+    font-size: 2rem;
+    margin-bottom: 14px;
+    display: block;
+  }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .card-desc {
+    font-size: 0.88rem;
+    color: var(--gray);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .card-meta {
+    display: flex; gap: 12px;
+    font-size: 0.78rem;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .start-btn {
+    background: linear-gradient(135deg, var(--accent), #c87010);
+    color: var(--navy);
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    padding: 16px 44px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 0.3px;
+  }
+  .start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(232,160,32,0.35);
+  }
+
+  /* Free resources bar */
+  .resources-bar {
+    background: rgba(255,255,255,0.03);
+    border-top: 1px solid var(--border);
+    padding: 20px 48px;
+  }
+  .resources-bar h3 {
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 12px;
+  }
+  .resource-links {
+    display: flex; flex-wrap: wrap; gap: 10px;
+  }
+  .resource-link {
+    display: flex; align-items: center; gap: 7px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 8px 14px;
+    text-decoration: none;
+    color: var(--white);
+    font-size: 0.83rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .resource-link:hover {
+    background: rgba(232,160,32,0.1);
+    border-color: rgba(232,160,32,0.3);
+    color: var(--accent2);
+  }
+  .resource-link .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  /* ===== QUIZ SCREEN ===== */
+  #quizScreen {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+  }
+
+  .quiz-header {
+    background: rgba(10,22,40,0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+
+  .quiz-info {
+    display: flex; align-items: center; gap: 20px;
+  }
+
+  .section-tag {
+    background: rgba(232,160,32,0.15);
+    border: 1px solid rgba(232,160,32,0.3);
+    color: var(--accent2);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .progress-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--gray);
+  }
+
+  .timer-box {
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 1.2rem;
+    font-weight: 500;
+    padding: 8px 16px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .timer-box.warning { color: var(--accent); border-color: rgba(232,160,32,0.3); }
+  .timer-box.danger { color: #e74c3c; border-color: rgba(231,76,60,0.3); animation: pulse 1s infinite; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  .progress-bar-wrap {
+    height: 3px;
+    background: rgba(255,255,255,0.06);
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--accent));
+    transition: width 0.4s ease;
+  }
+
+  .quiz-body {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 0;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 40px 32px;
+  }
+
+  /* Question area */
+  .question-area {
+    padding-right: 40px;
+  }
+
+  .q-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--accent);
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .q-text {
+    font-size: 1.1rem;
+    line-height: 1.75;
+    margin-bottom: 32px;
+    color: var(--light);
+  }
+
+  .q-passage {
+    background: rgba(255,255,255,0.04);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 20px 24px;
+    margin-bottom: 28px;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--light);
+    font-style: italic;
+  }
+
+  .choices {
+    display: flex; flex-direction: column; gap: 12px;
+  }
+
+  .choice {
+    display: flex; align-items: flex-start; gap: 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .choice:hover {
+    background: rgba(26,74,138,0.2);
+    border-color: rgba(26,74,138,0.5);
+  }
+  .choice.selected {
+    background: rgba(26,74,138,0.25);
+    border-color: var(--blue);
+  }
+  .choice.correct {
+    background: rgba(45,138,94,0.2);
+    border-color: var(--green);
+  }
+  .choice.incorrect {
+    background: rgba(192,57,43,0.15);
+    border-color: var(--red);
+  }
+
+  .choice-letter {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 500;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .choice.selected .choice-letter { background: var(--blue); }
+  .choice.correct .choice-letter { background: var(--green); }
+  .choice.incorrect .choice-letter { background: var(--red); }
+
+  .choice-text {
+    font-size: 0.97rem;
+    line-height: 1.55;
+  }
+
+  /* Explanation box */
+  .explanation {
+    margin-top: 24px;
+    background: rgba(45,138,94,0.08);
+    border: 1px solid rgba(45,138,94,0.25);
+    border-radius: 10px;
+    padding: 18px 20px;
+    display: none;
+  }
+  .explanation.show { display: block; }
+  .explanation-title {
+    font-size: 0.78rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .explanation p {
+    font-size: 0.92rem;
+    line-height: 1.65;
+    color: var(--light);
+  }
+
+  /* Nav buttons */
+  .quiz-nav {
+    display: flex; gap: 12px; margin-top: 32px;
+  }
+
+  .btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: var(--blue);
+    color: white;
+  }
+  .btn-primary:hover { background: #1d5aaa; transform: translateY(-1px); }
+  .btn-secondary {
+    background: rgba(255,255,255,0.07);
+    color: var(--white);
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .btn-secondary:hover { background: rgba(255,255,255,0.12); }
+  .btn-accent {
+    background: linear-gradient(135deg, var(--accent), #c87010);
+    color: var(--navy);
+  }
+  .btn-accent:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(232,160,32,0.3); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+
+  /* Sidebar */
+  .quiz-sidebar {
+    border-left: 1px solid var(--border);
+    padding-left: 32px;
+  }
+
+  .sidebar-title {
+    font-size: 0.72rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 14px;
+  }
+
+  .q-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin-bottom: 24px;
+  }
+
+  .q-dot {
+    width: 36px; height: 36px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.04);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--gray);
+  }
+  .q-dot:hover { border-color: rgba(255,255,255,0.3); }
+  .q-dot.current { background: var(--blue); border-color: var(--blue); color: white; }
+  .q-dot.answered { background: rgba(45,138,94,0.2); border-color: var(--green); color: var(--green); }
+  .q-dot.wrong { background: rgba(192,57,43,0.2); border-color: var(--red); color: var(--red); }
+
+  .sidebar-stats {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .stat-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 6px 0;
+    font-size: 0.85rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .stat-row:last-child { border: none; padding-bottom: 0; }
+  .stat-label { color: var(--gray); }
+  .stat-value { font-family: 'DM Mono', monospace; font-weight: 500; }
+  .stat-value.green { color: var(--green); }
+  .stat-value.red { color: var(--red); }
+
+  /* ===== RESULT SCREEN ===== */
+  #resultScreen {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 60px 32px;
+  }
+
+  .result-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .score-ring {
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    position: relative;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    margin: 0 auto 28px;
+  }
+
+  .score-ring svg {
+    position: absolute; top: 0; left: 0;
+    transform: rotate(-90deg);
+  }
+
+  .score-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 900;
+    line-height: 1;
+    position: relative; z-index: 1;
+  }
+  .score-label {
+    font-size: 0.8rem;
+    color: var(--gray);
+    position: relative; z-index: 1;
+    margin-top: 4px;
+  }
+
+  .result-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 900;
+    margin-bottom: 10px;
+  }
+  .result-sub {
+    font-size: 1rem;
+    color: var(--gray);
+  }
+
+  .result-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    max-width: 700px;
+    width: 100%;
+    margin-bottom: 40px;
+  }
+
+  .result-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+  .result-card .rc-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .result-card .rc-label {
+    font-size: 0.8rem;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .review-list {
+    max-width: 700px;
+    width: 100%;
+    margin-bottom: 40px;
+  }
+
+  .review-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .review-item {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 10px;
+  }
+  .review-item .ri-q {
+    font-size: 0.9rem;
+    color: var(--light);
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+  .ri-answers {
+    display: flex; gap: 16px; flex-wrap: wrap;
+    font-size: 0.83rem;
+    font-family: 'DM Mono', monospace;
+  }
+  .ri-your { color: var(--red); }
+  .ri-correct { color: var(--green); }
+  .ri-ok { color: var(--green); }
+
+  .result-actions {
+    display: flex; gap: 14px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== HOME SCREEN ===== -->
+<div id="homeScreen" class="screen active">
+  <header>
+    <div class="logo">SAT<span>Prep</span> Pro</div>
+    <div class="badge">✦ 무료</div>
+  </header>
+
+  <div class="hero">
+    <div class="hero-eyebrow">✦ Official SAT Practice ✦</div>
+    <h1>SAT 시험<br><em>완벽 준비</em></h1>
+    <p>실제 시험과 동일한 형식으로 연습하고, 즉시 채점과 해설을 확인하세요. 무료로 제공됩니다.</p>
+
+    <div class="section-cards">
+      <div class="section-card" style="--card-color:#4a90e2" onclick="startQuiz('reading')">
+        <span class="card-icon">📖</span>
+        <div class="card-title">Reading & Writing</div>
+        <div class="card-desc">문법, 독해, 문장 구조, 수사적 전략 등 SAT 언어 영역을 연습합니다.</div>
+        <div class="card-meta">
+          <span>⏱ 10문제</span>
+          <span>📊 700점 만점</span>
+        </div>
+      </div>
+
+      <div class="section-card" style="--card-color:#e8a020" onclick="startQuiz('math')">
+        <span class="card-icon">🔢</span>
+        <div class="card-title">Math</div>
+        <div class="card-desc">대수, 기하, 통계, 고급 수학 등 SAT 수학 영역을 연습합니다.</div>
+        <div class="card-meta">
+          <span>⏱ 10문제</span>
+          <span>📊 800점 만점</span>
+        </div>
+      </div>
+
+      <div class="section-card" style="--card-color:#2d8a5e" onclick="startQuiz('full')">
+        <span class="card-icon">🎯</span>
+        <div class="card-title">모의 Full Test</div>
+        <div class="card-desc">두 섹션 통합 연습. 실전과 동일하게 타이머와 함께 도전합니다.</div>
+        <div class="card-meta">
+          <span>⏱ 20문제</span>
+          <span>📊 1600점 만점</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="start-btn" onclick="startQuiz('reading')">지금 시작하기 →</button>
+  </div>
+
+  <div class="resources-bar">
+    <h3>🔗 공식 무료 SAT 자료</h3>
+    <div class="resource-links">
+      <a href="https://bluebook.collegeboard.org" target="_blank" class="resource-link">
+        <span class="dot"></span> College Board Bluebook (공식 디지털 SAT)
+      </a>
+      <a href="https://www.khanacademy.org/digital-sat" target="_blank" class="resource-link">
+        <span class="dot"></span> Khan Academy 공식 SAT Prep
+      </a>
+      <a href="https://satsuite.collegeboard.org/practice" target="_blank" class="resource-link">
+        <span class="dot"></span> SAT Suite 연습자료
+      </a>
+      <a href="https://www.khanacademy.org/test-prep/sat-reading-and-writing" target="_blank" class="resource-link">
+        <span class="dot"></span> Khan Academy Reading & Writing
+      </a>
+      <a href="https://www.khanacademy.org/test-prep/sat-math" target="_blank" class="resource-link">
+        <span class="dot"></span> Khan Academy Math
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ===== QUIZ SCREEN ===== -->
+<div id="quizScreen" class="screen">
+  <div class="quiz-header">
+    <div class="quiz-info">
+      <div class="section-tag" id="sectionTag">Reading & Writing</div>
+      <div class="progress-text" id="progressText">문제 1 / 10</div>
+    </div>
+    <div class="timer-box" id="timerBox">
+      ⏱ <span id="timerDisplay">25:00</span>
+    </div>
+    <button class="btn btn-secondary" onclick="endQuiz()">채점하기</button>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
+  </div>
+
+  <div class="quiz-body">
+    <div class="question-area">
+      <div class="q-number" id="qNumber">문제 01</div>
+      <div class="q-passage" id="qPassage" style="display:none"></div>
+      <div class="q-text" id="qText"></div>
+      <div class="choices" id="choicesContainer"></div>
+      <div class="explanation" id="explanationBox">
+        <div class="explanation-title">💡 해설</div>
+        <p id="explanationText"></p>
+      </div>
+      <div class="quiz-nav">
+        <button class="btn btn-secondary" id="prevBtn" onclick="prevQ()" disabled>← 이전</button>
+        <button class="btn btn-primary" id="nextBtn" onclick="nextQ()">다음 →</button>
+        <button class="btn btn-accent" id="submitBtn" onclick="endQuiz()" style="display:none">채점하기 🎯</button>
+      </div>
+    </div>
+
+    <div class="quiz-sidebar">
+      <div class="sidebar-title">문제 목록</div>
+      <div class="q-grid" id="qGrid"></div>
+
+      <div class="sidebar-stats">
+        <div class="stat-row">
+          <span class="stat-label">총 문제</span>
+          <span class="stat-value" id="totalQ">10</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">답변 완료</span>
+          <span class="stat-value green" id="answeredQ">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">미답변</span>
+          <span class="stat-value red" id="unansweredQ">10</span>
+        </div>
+      </div>
+
+      <button class="btn btn-accent" style="width:100%" onclick="endQuiz()">채점하기 →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== RESULT SCREEN ===== -->
+<div id="resultScreen" class="screen">
+  <div class="result-header">
+    <div class="score-ring" id="scoreRing">
+      <svg width="180" height="180" viewBox="0 0 180 180">
+        <circle cx="90" cy="90" r="80" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="12"/>
+        <circle cx="90" cy="90" r="80" fill="none" stroke-width="12"
+                stroke-linecap="round" id="scoreCircle"
+                stroke="url(#scoreGrad)"
+                stroke-dasharray="502.65"
+                stroke-dashoffset="502.65"/>
+        <defs>
+          <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#1a4a8a"/>
+            <stop offset="100%" stop-color="#e8a020"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="score-num" id="scoreNum">0</div>
+      <div class="score-label">점수</div>
+    </div>
+
+    <div class="result-title" id="resultTitle">잘 하셨습니다!</div>
+    <div class="result-sub" id="resultSub">결과를 확인하세요</div>
+  </div>
+
+  <div class="result-cards">
+    <div class="result-card">
+      <div class="rc-num" id="rcCorrect" style="color:#2d8a5e">0</div>
+      <div class="rc-label">정답</div>
+    </div>
+    <div class="result-card">
+      <div class="rc-num" id="rcWrong" style="color:#c0392b">0</div>
+      <div class="rc-label">오답</div>
+    </div>
+    <div class="result-card">
+      <div class="rc-num" id="rcPct" style="color:#e8a020">0%</div>
+      <div class="rc-label">정확도</div>
+    </div>
+  </div>
+
+  <div class="review-list">
+    <div class="review-title">📋 오답 노트</div>
+    <div id="reviewItems"></div>
+  </div>
+
+  <div class="result-actions">
+    <button class="btn btn-secondary" onclick="goHome()">← 처음으로</button>
+    <button class="btn btn-accent" onclick="retryQuiz()">다시 풀기 🔄</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// QUESTION DATA
+// ============================================================
+const questions = {
+  reading: [
+    {
+      type: 'reading',
+      passage: `The following passage is adapted from a 2023 article on urban biodiversity:\n\n"Cities, long considered ecological deserts, have emerged as unexpected refuges for wildlife. Green roofs, urban parks, and tree-lined streets create corridors that allow species to move, feed, and reproduce. Researchers have documented over 300 bird species in major metropolitan areas — a figure that rivals many rural regions."`,
+      text: "Which choice best states the main claim of the passage?",
+      choices: [
+        "Cities are more ecologically diverse than rural regions.",
+        "Urban environments can support surprising levels of wildlife diversity.",
+        "Green roofs are the primary reason birds inhabit cities.",
+        "Metropolitan areas have completely replaced rural habitats."
+      ],
+      answer: 1,
+      explanation: "The passage's central argument is that cities, though once thought barren, now support significant wildlife — especially birds. Choice B captures this nuanced claim. A overstates the comparison; C is too narrow; D is contradicted by the text."
+    },
+    {
+      type: 'reading',
+      text: "Which sentence uses a semicolon correctly?",
+      choices: [
+        "She studied all night; and still felt unprepared.",
+        "The experiment failed; however, the data proved valuable.",
+        "He was tired; but he continued working.",
+        "They arrived early; to get good seats."
+      ],
+      answer: 1,
+      explanation: "A semicolon connects two independent clauses. 'However' is a conjunctive adverb requiring a semicolon before it and a comma after. Options A, C, and D use semicolons before coordinating conjunctions or infinitive phrases — both incorrect."
+    },
+    {
+      type: 'reading',
+      passage: `"The novel's narrator employs a stream-of-consciousness technique, blurring the boundary between internal thought and external event. This ambiguity is not a flaw but a deliberate strategy: the author wants readers to feel the protagonist's psychological fragmentation firsthand."`,
+      text: "The author's use of 'deliberate strategy' primarily serves to:",
+      choices: [
+        "criticize the narrator's unreliability",
+        "defend the author's stylistic choice as intentional",
+        "suggest the novel is difficult to understand",
+        "compare the novel to other modernist works"
+      ],
+      answer: 1,
+      explanation: "'Deliberate strategy' frames the ambiguity as a purposeful artistic decision. The phrase counters the idea that blurring thought and event is a mistake (hence 'not a flaw'). B is the correct interpretation."
+    },
+    {
+      type: 'reading',
+      text: "Select the most logical transition to complete the sentence:\n\n'Solar energy has grown dramatically in the past decade. ______, fossil fuels still account for the majority of global energy consumption.'",
+      choices: [
+        "Therefore",
+        "Similarly",
+        "Nevertheless",
+        "Specifically"
+      ],
+      answer: 2,
+      explanation: "The second clause contrasts with the first (growth vs. still dominant). 'Nevertheless' signals this contrast. 'Therefore' implies causation; 'Similarly' implies similarity; 'Specifically' signals elaboration — none of these fit the contrast."
+    },
+    {
+      type: 'reading',
+      text: "Which choice most effectively combines the two sentences?\n\nSentence 1: The study was inconclusive.\nSentence 2: The researchers decided to expand their sample size.",
+      choices: [
+        "The study was inconclusive, so the researchers decided to expand their sample size.",
+        "The study was inconclusive; the researchers decided to expand their sample size.",
+        "The researchers decided to expand their sample size, but the study was inconclusive.",
+        "Since the study was inconclusive, and the researchers decided to expand their sample size."
+      ],
+      answer: 0,
+      explanation: "Using 'so' creates a clear cause-and-effect relationship between the inconclusive study and the decision to expand. B uses a semicolon without showing the causal link. C reverses the logic. D is grammatically awkward."
+    },
+    {
+      type: 'reading',
+      passage: `"Migratory birds navigate using magnetic fields, star patterns, and learned landmarks. Recent studies suggest that some species also use infrasound — low-frequency sound waves produced by ocean waves and wind — as an additional navigational cue."`,
+      text: "According to the passage, infrasound is:",
+      choices: [
+        "the primary navigation method for migratory birds",
+        "produced exclusively by wind",
+        "a low-frequency sound that may help birds navigate",
+        "a recently debunked theory about bird migration"
+      ],
+      answer: 2,
+      explanation: "The passage defines infrasound as low-frequency sound waves and describes it as an 'additional navigational cue.' C accurately reflects this. A contradicts 'additional'; B omits ocean waves; D contradicts the passage."
+    },
+    {
+      type: 'reading',
+      text: "Which version of the underlined portion best maintains the formal register of the sentence?\n\n'The committee's recommendation, which was adopted unanimously, ______ a significant shift in institutional policy.'",
+      choices: [
+        "was a big deal for",
+        "represented",
+        "totally changed",
+        "kind of showed"
+      ],
+      answer: 1,
+      explanation: "'Represented' is precise and formal, fitting the academic/professional register. The other choices are colloquial ('big deal,' 'totally,' 'kind of') and inappropriate for formal writing."
+    },
+    {
+      type: 'reading',
+      text: "Identify the error in the sentence:\n\n'Neither the students nor the teacher are prepared for the exam.'",
+      choices: [
+        "No error — the sentence is correct.",
+        "Subject-verb agreement: 'are' should be 'is' (verb agrees with 'teacher').",
+        "Pronoun reference: 'nor' should be 'or'.",
+        "Parallel structure: 'prepared' should be 'preparing'."
+      ],
+      answer: 1,
+      explanation: "With 'neither...nor', the verb agrees with the subject closest to it. Since 'teacher' (singular) is closest to the verb, 'are' should be 'is.' This is a subject-verb agreement error."
+    },
+    {
+      type: 'reading',
+      passage: `"Archaeological evidence from the site suggests continuous habitation over 4,000 years. The earliest layers contain simple stone tools and animal bones, while upper layers reveal increasingly sophisticated ceramics and evidence of trade networks extending hundreds of miles."`,
+      text: "The progression described in the passage most directly supports which conclusion?",
+      choices: [
+        "The inhabitants abandoned the site during a climate catastrophe.",
+        "The site's population declined over time.",
+        "The community developed greater technological and social complexity over millennia.",
+        "Trade networks replaced agricultural practices at the site."
+      ],
+      answer: 2,
+      explanation: "The shift from simple tools to sophisticated ceramics and trade networks indicates increasing complexity. C captures this developmental arc. There is no mention of abandonment, decline, or replacement of agriculture in the passage."
+    },
+    {
+      type: 'reading',
+      text: "Which word, if inserted in the blank, best completes the sentence?\n\n'The senator's speech was ______, drawing on evidence from economics, history, and philosophy to support a single argument.'",
+      choices: [
+        "monotonous",
+        "synthetic",
+        "interdisciplinary",
+        "ambiguous"
+      ],
+      answer: 2,
+      explanation: "'Interdisciplinary' means drawing on multiple academic disciplines — economics, history, and philosophy all fit. 'Synthetic' implies combining ideas but lacks the academic register. 'Monotonous' means boring; 'ambiguous' means unclear — both contradict the sentence's tone."
+    }
+  ],
+
+  math: [
+    {
+      type: 'math',
+      text: "If 3x − 7 = 14, what is the value of x?",
+      choices: ["5", "7", "3", "9"],
+      answer: 1,
+      explanation: "3x − 7 = 14 → 3x = 21 → x = 7. Add 7 to both sides, then divide by 3."
+    },
+    {
+      type: 'math',
+      text: "A line passes through the points (2, 5) and (6, 13). What is the slope of the line?",
+      choices: ["2", "3", "4", "1.5"],
+      answer: 0,
+      explanation: "Slope = (y₂ − y₁) / (x₂ − x₁) = (13 − 5) / (6 − 2) = 8 / 4 = 2."
+    },
+    {
+      type: 'math',
+      text: "If f(x) = 2x² − 3x + 1, what is f(3)?",
+      choices: ["8", "10", "12", "14"],
+      answer: 1,
+      explanation: "f(3) = 2(3)² − 3(3) + 1 = 2(9) − 9 + 1 = 18 − 9 + 1 = 10."
+    },
+    {
+      type: 'math',
+      text: "A rectangle has a perimeter of 56 cm. If the length is 3 times the width, what is the width?",
+      choices: ["6", "7", "8", "14"],
+      answer: 1,
+      explanation: "Let width = w, length = 3w. Perimeter: 2(w + 3w) = 56 → 2(4w) = 56 → 8w = 56 → w = 7 cm."
+    },
+    {
+      type: 'math',
+      text: "If 40% of a number is 28, what is 75% of the same number?",
+      choices: ["42", "52.5", "56", "70"],
+      answer: 1,
+      explanation: "40% of n = 28 → n = 70. Then 75% of 70 = 0.75 × 70 = 52.5."
+    },
+    {
+      type: 'math',
+      text: "The equation y = −2x + 6 is graphed in the xy-plane. What is the y-intercept?",
+      choices: ["−2", "3", "6", "−6"],
+      answer: 2,
+      explanation: "In y = mx + b form, b is the y-intercept. Here b = 6. The y-intercept is (0, 6)."
+    },
+    {
+      type: 'math',
+      text: "x² − 5x + 6 = 0. What are the solutions?",
+      choices: ["x = 1 and x = 6", "x = 2 and x = 3", "x = −2 and x = −3", "x = 2 and x = −3"],
+      answer: 1,
+      explanation: "Factor: (x − 2)(x − 3) = 0. Solutions: x = 2 or x = 3. Check: 2×3 = 6 ✓, 2+3 = 5 ✓"
+    },
+    {
+      type: 'math',
+      text: "A circle has a radius of 5. What is its area? (Use π ≈ 3.14)",
+      choices: ["31.4", "78.5", "15.7", "25π"],
+      answer: 1,
+      explanation: "Area = πr² = 3.14 × 5² = 3.14 × 25 = 78.5 square units."
+    },
+    {
+      type: 'math',
+      text: "A bag contains 4 red, 3 blue, and 5 green marbles. What is the probability of randomly selecting a red marble?",
+      choices: ["1/3", "1/4", "4/12", "Both B and C"],
+      answer: 3,
+      explanation: "P(red) = 4/(4+3+5) = 4/12 = 1/3. Both 1/3 and 4/12 are equivalent values. The answer is D (both B and C are correct representations)."
+    },
+    {
+      type: 'math',
+      text: "If the mean of 5, 8, 12, x, and 15 is 10, what is the value of x?",
+      choices: ["8", "10", "12", "14"],
+      answer: 1,
+      explanation: "Mean = (5 + 8 + 12 + x + 15) / 5 = 10 → 40 + x = 50 → x = 10."
+    }
+  ]
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let currentQuiz = [];
+let currentQIndex = 0;
+let userAnswers = [];
+let timerInterval = null;
+let timeLeft = 0;
+let quizMode = 'reading';
+
+// ============================================================
+// START
+// ============================================================
+function startQuiz(mode) {
+  quizMode = mode;
+  if (mode === 'full') {
+    currentQuiz = [...questions.reading, ...questions.math];
+  } else {
+    currentQuiz = [...questions[mode]];
+  }
+  userAnswers = new Array(currentQuiz.length).fill(null);
+  currentQIndex = 0;
+
+  // Timer
+  timeLeft = mode === 'full' ? 35 * 60 : 18 * 60;
+
+  // UI
+  document.getElementById('sectionTag').textContent =
+    mode === 'reading' ? 'Reading & Writing' :
+    mode === 'math' ? 'Math' : 'Full Test';
+
+  showScreen('quizScreen');
+  renderQuestion();
+  buildGrid();
+  startTimer();
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ============================================================
+// TIMER
+// ============================================================
+function startTimer() {
+  clearInterval(timerInterval);
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimerDisplay();
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      endQuiz();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+  const s = (timeLeft % 60).toString().padStart(2, '0');
+  document.getElementById('timerDisplay').textContent = `${m}:${s}`;
+  const box = document.getElementById('timerBox');
+  box.className = 'timer-box';
+  if (timeLeft < 300) box.classList.add('warning');
+  if (timeLeft < 60) box.classList.add('danger');
+}
+
+// ============================================================
+// RENDER QUESTION
+// ============================================================
+function renderQuestion() {
+  const q = currentQuiz[currentQIndex];
+  const total = currentQuiz.length;
+
+  document.getElementById('qNumber').textContent =
+    `문제 ${String(currentQIndex + 1).padStart(2, '0')}`;
+  document.getElementById('progressText').textContent =
+    `문제 ${currentQIndex + 1} / ${total}`;
+  document.getElementById('progressBar').style.width =
+    `${((currentQIndex + 1) / total) * 100}%`;
+
+  // Passage
+  const passageEl = document.getElementById('qPassage');
+  if (q.passage) {
+    passageEl.textContent = q.passage;
+    passageEl.style.display = 'block';
+  } else {
+    passageEl.style.display = 'none';
+  }
+
+  document.getElementById('qText').textContent = q.text;
+
+  // Choices
+  const container = document.getElementById('choicesContainer');
+  container.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  q.choices.forEach((ch, i) => {
+    const div = document.createElement('div');
+    div.className = 'choice';
+    if (userAnswers[currentQIndex] === i) div.classList.add('selected');
+    div.innerHTML = `<span class="choice-letter">${letters[i]}</span><span class="choice-text">${ch}</span>`;
+    div.onclick = () => selectAnswer(i);
+    container.appendChild(div);
+  });
+
+  // Explanation (if already answered and shown)
+  const expBox = document.getElementById('explanationBox');
+  expBox.classList.remove('show');
+
+  // Nav
+  document.getElementById('prevBtn').disabled = currentQIndex === 0;
+  document.getElementById('nextBtn').style.display = currentQIndex < total - 1 ? 'inline-flex' : 'none';
+  document.getElementById('submitBtn').style.display = currentQIndex === total - 1 ? 'inline-flex' : 'none';
+
+  updateStats();
+  updateGrid();
+}
+
+function selectAnswer(idx) {
+  userAnswers[currentQIndex] = idx;
+  const choices = document.querySelectorAll('.choice');
+  choices.forEach((c, i) => {
+    c.className = 'choice';
+    if (i === idx) c.classList.add('selected');
+  });
+  updateStats();
+  updateGrid();
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function nextQ() {
+  if (currentQIndex < currentQuiz.length - 1) {
+    currentQIndex++;
+    renderQuestion();
+  }
+}
+
+function prevQ() {
+  if (currentQIndex > 0) {
+    currentQIndex--;
+    renderQuestion();
+  }
+}
+
+function goToQ(i) {
+  currentQIndex = i;
+  renderQuestion();
+}
+
+// ============================================================
+// GRID
+// ============================================================
+function buildGrid() {
+  const grid = document.getElementById('qGrid');
+  grid.innerHTML = '';
+  document.getElementById('totalQ').textContent = currentQuiz.length;
+  currentQuiz.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'q-dot';
+    dot.textContent = i + 1;
+    dot.onclick = () => goToQ(i);
+    grid.appendChild(dot);
+  });
+}
+
+function updateGrid() {
+  const dots = document.querySelectorAll('.q-dot');
+  dots.forEach((dot, i) => {
+    dot.className = 'q-dot';
+    if (i === currentQIndex) dot.classList.add('current');
+    else if (userAnswers[i] !== null) dot.classList.add('answered');
+  });
+}
+
+function updateStats() {
+  const answered = userAnswers.filter(a => a !== null).length;
+  document.getElementById('answeredQ').textContent = answered;
+  document.getElementById('unansweredQ').textContent = currentQuiz.length - answered;
+}
+
+// ============================================================
+// END / SCORE
+// ============================================================
+function endQuiz() {
+  clearInterval(timerInterval);
+
+  let correct = 0;
+  currentQuiz.forEach((q, i) => {
+    if (userAnswers[i] === q.answer) correct++;
+  });
+
+  const wrong = currentQuiz.length - correct;
+  const pct = Math.round((correct / currentQuiz.length) * 100);
+
+  // Estimate SAT-style score
+  let score;
+  if (quizMode === 'math') {
+    score = Math.round(200 + (correct / currentQuiz.length) * 600);
+  } else if (quizMode === 'reading') {
+    score = Math.round(200 + (correct / currentQuiz.length) * 500);
+  } else {
+    score = Math.round(400 + (correct / currentQuiz.length) * 1200);
+  }
+
+  document.getElementById('scoreNum').textContent = score;
+  document.getElementById('rcCorrect').textContent = correct;
+  document.getElementById('rcWrong').textContent = wrong;
+  document.getElementById('rcPct').textContent = pct + '%';
+
+  // Animated ring
+  const circumference = 502.65;
+  const offset = circumference - (pct / 100) * circumference;
+  setTimeout(() => {
+    document.getElementById('scoreCircle').style.transition = 'stroke-dashoffset 1.2s ease';
+    document.getElementById('scoreCircle').style.strokeDashoffset = offset;
+  }, 300);
+
+  // Title
+  const titles = pct >= 90 ? ['완벽합니다! 🏆', 'SAT 만점을 노려볼 수 있어요!'] :
+                 pct >= 70 ? ['훌륭합니다! 🎉', '좋은 점수를 받을 준비가 됐어요.'] :
+                 pct >= 50 ? ['잘 하셨습니다! 📚', '더 연습하면 점수가 올라갈 거예요.'] :
+                             ['계속 노력하세요! 💪', '오답 노트를 확인하고 다시 도전해보세요.'];
+  document.getElementById('resultTitle').textContent = titles[0];
+  document.getElementById('resultSub').textContent = `${score}점 | ` + titles[1];
+
+  // Review wrong answers
+  const reviewEl = document.getElementById('reviewItems');
+  reviewEl.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+
+  let hasWrong = false;
+  currentQuiz.forEach((q, i) => {
+    if (userAnswers[i] !== q.answer) {
+      hasWrong = true;
+      const div = document.createElement('div');
+      div.className = 'review-item';
+      const yourAns = userAnswers[i] !== null
+        ? `${letters[userAnswers[i]]}. ${q.choices[userAnswers[i]]}`
+        : '미답변';
+      div.innerHTML = `
+        <div class="ri-q">Q${i+1}. ${q.text.substring(0, 100)}${q.text.length > 100 ? '...' : ''}</div>
+        <div class="ri-answers">
+          <span class="ri-your">✗ 내 답: ${yourAns}</span>
+          <span class="ri-correct">✓ 정답: ${letters[q.answer]}. ${q.choices[q.answer]}</span>
+        </div>
+        <div style="margin-top:10px;font-size:0.83rem;color:#8a9ab0;line-height:1.55">💡 ${q.explanation}</div>
+      `;
+      reviewEl.appendChild(div);
+    }
+  });
+
+  if (!hasWrong) {
+    reviewEl.innerHTML = '<div style="text-align:center;padding:24px;color:#2d8a5e;font-size:1rem">🎊 모든 문제를 맞혔습니다!</div>';
+  }
+
+  showScreen('resultScreen');
+}
+
+function goHome() {
+  clearInterval(timerInterval);
+  showScreen('homeScreen');
+}
+
+function retryQuiz() {
+  startQuiz(quizMode);
+}
+</script>
+</body>
+</html>
