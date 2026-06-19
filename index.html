@@ -102,4 +102,284 @@
                     <i class="fa-solid fa-arrow-left mr-2"></i> Previous
                 </button>
                 
-                <button id="
+                <button id="btn-reveal" onclick="toggleExplanation()" class="px-5 py-3 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 transition dark:bg-slate-700 dark:text-slate-200">
+                    <i class="fa-regular fa-lightbulb mr-2"></i> Check Logic
+                </button>
+
+                <button id="btn-next" onclick="navigateQuestion(1)" class="px-5 py-3 rounded-xl bg-slate-900 text-white font-medium hover:bg-slate-800 shadow-md transition dark:bg-blue-600 dark:hover:bg-blue-700">
+                    Next <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let satQuestions = [];
+        let currentIndex = 0;
+        let userAnswers = {};
+        let timeRemaining = 4800; 
+        let fontSizeScale = 100;
+        let revealedExplanations = {};
+
+        const rwMasterPool = [
+            { id: "R1", tag: "Reading: Information and Ideas", text: "In geopolitical ecosystems, resource distribution dynamics often change rapidly. Recent telemetry maps confirm that localized micro-environments undergo distinct structural shifts, directly contradicting older static models.", prompt: "Which choice best summarizes the main perspective of the text?", options: ["Recent empirical mappings challenge obsolete, static historical models.", "Resource distributions are entirely predictable based on altitude.", "Researchers recommend abandoning multi-variable ecosystem tracking.", "Older tracking frameworks are vastly superior due to simplicity."], correct: 0 },
+            { id: "R2", tag: "Reading: Craft and Structure", text: "The ancient cryptographic formulas discovered in the lower chambers were initially believed to be corrupted beyond recovery. However, modern multi-spectral scanning revealed that the internal grid lines remained entirely ________.", prompt: "Which choice completes the text with the most precise and contextually appropriate word?", options: ["pristine", "obsolete", "redundant", "hazardous"], correct: 0 },
+            { id: "W1", tag: "Writing: Expression of Ideas", text: "Before modern seismic networks were fully integrated, geologists predicted continental volcanic eruptions using manually monitored hot springs. ________, today's telemetry systems instantly compute shifts in seismic velocity to warn global populations hours in advance.", prompt: "Which choice provides the most effective transition?", options: ["In contrast", "Consequently", "For instance", "Furthermore"], correct: 0 },
+            { id: "R3", tag: "Reading: Command of Evidence", text: "Studies led by Dr. Arisaka show that marine organisms near volcanic trenches exhibit unique adaptation cycles due to chemical sulfur concentrations. Critics argue that localized water pressures, rather than toxic sulfur, explain the cell mutations.", prompt: "Which discovery, if true, would most directly undermine the critics' objection?", options: ["Organisms in high-pressure, sulfur-free zones show zero cell mutations.", "Deep-sea pressures fluctuate relative to lunar gravitational currents.", "Sulfur levels are consistent along the entire perimeter of the trench.", "Similar genetic mutations occur in terrestrial sulfur cave bats."], correct: 0 },
+            { id: "W2", tag: "Writing: Standard English Conventions", text: "When Thomas Edison patented the incandescent light bulb in 1879, he did not work entirely alone; his laboratory assistants ________ critical roles in iterating thousands of carbon filament variants.", prompt: "Which choice completes the text according to standard English rules?", options: ["had played", "plays", "is playing", "will play"], correct: 0 }
+        ];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            applySavedTheme();
+            const savedState = localStorage.getItem('sat_40q_pool_state_v3');
+            if (savedState) {
+                loadProgress(savedState);
+            } else {
+                buildRandom40Questions();
+            }
+            startTimer();
+        });
+
+        function buildRandom40Questions() {
+            satQuestions = [];
+            userAnswers = {};
+            revealedExplanations = {};
+            currentIndex = 0;
+            let rwTrackIndex = 0;
+
+            for (let i = 1; i <= 40; i++) {
+                if (i % 2 === 1) {
+                    let geomType = Math.floor(Math.random() * 4);
+                    let modifier = Math.floor(Math.random() * 5) + 2; 
+
+                    if (geomType === 0) {
+                        const radius = modifier * 3;
+                        const arcAngle = 110;
+                        satQuestions.push({
+                            id: i, tag: "Math: Geometry (Circle Theorems)",
+                            graphic: `<svg width="160" height="160" viewBox="0 0 160 160" class="stroke-slate-800 dark:stroke-slate-200 fill-none stroke-2"><circle cx="80" cy="80" r="60" /><line x1="80" y1="80" x2="80" y2="20" /><line x1="80" y1="80" x2="136" y2="102" /><line x1="80" y1="20" x2="23" y2="100" /><line x1="136" y1="102" x2="23" y2="100" /><text x="85" y="70" class="fill-current stroke-none text-xs font-bold">O</text><text x="85" y="50" class="fill-current stroke-none text-xs text-amber-500 font-mono">${arcAngle}°</text></svg>`,
+                            passage: `In the circle centered at $O$ shown above, the central angle measures exactly $${arcAngle}^\\circ$ and the radius is $r = ${radius}$.`,
+                            prompt: "What is the degree measure of the inscribed angle that intercepts the same minor arc?",
+                            options: [`A) ${(arcAngle / 2).toFixed(1)}°`, `B) ${arcAngle}°`, `C) ${(arcAngle * 2)}°`, `D) ${(180 - arcAngle)}°`], correct: 0,
+                            explanation: `Correct answer: <b>A</b>.<br>By the Inscribed Angle Theorem, an inscribed angle is exactly half of the central angle that intercepts the same arc: $\\frac{${arcAngle}}{2} = ${(arcAngle / 2).toFixed(1)}^\\circ$.`
+                        });
+                    } else if (geomType === 1) {
+                        const r = modifier;
+                        const h = modifier * 4;
+                        const volumePi = r * r * h;
+                        satQuestions.push({
+                            id: i, tag: "Math: Geometry (Advanced Volume)",
+                            graphic: `<svg width="150" height="150" viewBox="0 0 150 150" class="stroke-slate-800 dark:stroke-slate-200 fill-none stroke-2"><ellipse cx="75" cy="30" rx="40" ry="15" /><ellipse cx="75" cy="120" rx="40" ry="15" style="stroke-dasharray: 4 4;" /><line x1="35" y1="30" x2="35" y2="120" /><line x1="115" y1="30" x2="115" y2="120" /><line x1="75" y1="120" x2="115" y2="120" class="stroke-red-400" /><text x="90" y="115" class="fill-current stroke-none text-xs">r = ${r}</text><text x="125" y="75" class="fill-current stroke-none text-xs">h = ${h}</text></svg>`,
+                            passage: `A right circular cylinder has a base radius of $r = ${r}$ and a height of $h = ${h}$.`,
+                            prompt: "What is the total volume of the cylinder in terms of $\\pi$?",
+                            options: [`A) $${volumePi}\\pi$`, `B) $${r * h}\\pi$`, `C) $${r * 2 * h}\\pi$`, `D) $${(volumePi / 3).toFixed(0)}\\pi$`], correct: 0,
+                            explanation: `Correct answer: <b>A</b>.<br>The volume formula is $V = \\pi r^2 h$. Substituting variables: $V = \\pi (${r})^2 (${h}) = ${volumePi}\\pi$.`
+                        });
+                    } else if (geomType === 2) {
+                        const bShort = modifier * 2;
+                        const bLong = modifier * 5;
+                        satQuestions.push({
+                            id: i, tag: "Math: Geometry (Similar Triangles)",
+                            graphic: `<svg width="180" height="130" viewBox="0 0 180 130" class="stroke-slate-800 dark:stroke-slate-200 fill-none stroke-2"><polygon points="20,110 160,110 90,20" /><line x1="48" y1="75" x2="132" y2="75" /><text x="85" y="70" class="fill-current stroke-none text-xs">${bShort}</text><text x="85" y="125" class="fill-current stroke-none text-xs">${bLong}</text></svg>`,
+                            passage: `The horizontal interior line segment is parallel to the base. The upper base is $${bShort}$ and the bottom base is $${bLong}$.`,
+                            prompt: "If the total height of the large triangle is 50, what is the height of the smaller top triangle?",
+                            options: [`A) ${(50 * bShort / bLong).toFixed(1)}`, `B) ${bShort + bLong}`, `C) 25.0`, `D) ${(50 * bLong / bShort).toFixed(1)}`], correct: 0,
+                            explanation: `Correct answer: <b>A</b>.<br>Using similarity ratio: $\\frac{h}{50} = \\frac{${bShort}}{${bLong}} \\rightarrow h = ${(50 * bShort / bLong).toFixed(1)}$.`
+                        });
+                    } else {
+                        // [대수 수식형 포함 문항] - 판별식 킬러문항 수식 동적 부여
+                        const cVal = modifier * 4; 
+                        satQuestions.push({
+                            id: i, tag: "Math: Advanced Algebra (Systems)",
+                            passage: `Consider the equation where $k$ is a constant: $$4x^2 - 4x + (k - ${cVal}) = 0$$`,
+                            prompt: "If the given equation has no real solutions, which choice could be the value of $k$?",
+                            options: [`A) ${cVal + 2}`, `B) ${cVal - 5}`, `C) 0`, `D) -1`], correct: 0,
+                            explanation: `Correct answer: <b>A</b>.<br>For no real solutions, $D = b^2 - 4ac < 0$. $16 - 16(k - ${cVal}) < 0 \\rightarrow k > ${cVal + 1}$.`
+                        });
+                    }
+                } else {
+                    let template = rwMasterPool[rwTrackIndex % rwMasterPool.length];
+                    rwTrackIndex++;
+                    satQuestions.push({
+                        id: i, tag: template.tag, passage: template.text, prompt: template.prompt, options: template.options, correct: template.correct,
+                        explanation: `Correct answer: <b>${String.fromCharCode(65 + template.correct)}</b>. Fits standard SAT contextual paradigms.`
+                    });
+                }
+            }
+            saveProgress();
+            renderSidebar();
+            displayQuestion();
+        }
+
+        function displayQuestion() {
+            if (satQuestions.length === 0) return;
+            const q = satQuestions[currentIndex];
+            
+            document.getElementById('question-tag').innerText = q.tag;
+            document.getElementById('question-passage').innerHTML = q.passage;
+            document.getElementById('question-prompt').innerHTML = q.prompt;
+
+            const graphicContainer = document.getElementById('graphic-container');
+            if (q.graphic) {
+                graphicContainer.innerHTML = q.graphic;
+                graphicContainer.classList.remove('hidden');
+            } else {
+                graphicContainer.classList.add('hidden');
+            }
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            q.options.forEach((opt, idx) => {
+                const isSelected = userAnswers[q.id] === idx;
+                const optButton = document.createElement('button');
+                optButton.className = `w-full text-left p-4 rounded-xl border transition flex items-center space-x-4 group ${
+                    isSelected ? 'border-blue-600 bg-blue-50/50 dark:border-blue-500 dark:bg-blue-950/30' : 'border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50'
+                }`;
+                optButton.onclick = () => selectOption(idx);
+                
+                const prefix = String.fromCharCode(65 + idx);
+                optButton.innerHTML = `
+                    <span class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'}">${prefix}</span>
+                    <span class="font-medium">${opt}</span>
+                `;
+                container.appendChild(optButton);
+            });
+
+            document.getElementById('btn-prev').disabled = currentIndex === 0;
+            document.getElementById('btn-next').disabled = currentIndex === satQuestions.length - 1;
+
+            const expBox = document.getElementById('explanation-box');
+            if (revealedExplanations[q.id]) {
+                document.getElementById('explanation-text').innerHTML = q.explanation;
+                expBox.classList.remove('hidden');
+            } else {
+                expBox.classList.add('hidden');
+            }
+
+            // ⭐ [핵심 수정] DOM 변경 완료 후 MathJax 렌더링 스케줄을 브라우저 렌더 큐 후순위로 안전하게 위임
+            setTimeout(() => {
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    window.MathJax.typesetPromise([
+                        document.getElementById('question-passage'),
+                        document.getElementById('question-prompt'),
+                        document.getElementById('options-container'),
+                        document.getElementById('explanation-text')
+                    ]).catch((err) => console.log(err));
+                }
+            }, 50);
+        }
+
+        function selectOption(idx) {
+            userAnswers[satQuestions[currentIndex].id] = idx;
+            saveProgress();
+            renderSidebar();
+            displayQuestion();
+        }
+
+        function toggleExplanation() {
+            const q = satQuestions[currentIndex];
+            revealedExplanations[q.id] = !revealedExplanations[q.id];
+            saveProgress();
+            displayQuestion();
+        }
+
+        function navigateQuestion(direction) {
+            currentIndex += direction;
+            displayQuestion();
+            renderSidebar();
+        }
+
+        function jumpToQuestion(index) {
+            currentIndex = index;
+            displayQuestion();
+            renderSidebar();
+        }
+
+        function renderSidebar() {
+            const grid = document.getElementById('question-grid');
+            grid.innerHTML = '';
+            satQuestions.forEach((q, idx) => {
+                const isCurrent = idx === currentIndex;
+                const isAnswered = userAnswers[q.id] !== undefined;
+                const gridItem = document.createElement('button');
+                gridItem.className = `h-10 w-10 rounded-xl font-mono font-bold text-xs transition flex items-center justify-center border ${
+                    isCurrent ? 'border-blue-600 text-blue-600 ring-2 ring-blue-600/20 dark:border-blue-400 dark:text-blue-400' : isAnswered ? 'bg-blue-600 border-blue-600 text-white' : 'border-slate-200 text-slate-400 dark:border-slate-700 dark:text-slate-500'
+                }`;
+                gridItem.innerText = q.id;
+                gridItem.onclick = () => jumpToQuestion(idx);
+                grid.appendChild(gridItem);
+            });
+            updateProgressMetrics();
+        }
+
+        function updateProgressMetrics() {
+            const completedCount = Object.keys(userAnswers).length;
+            const total = satQuestions.length;
+            document.getElementById('progress-text').innerText = `${completedCount}/${total} Answered`;
+            document.getElementById('progress-bar').style.width = `${(completedCount / total) * 100}%`;
+        }
+
+        function startTimer() {
+            const display = document.getElementById('timer-display');
+            setInterval(() => {
+                if (timeRemaining <= 0) return;
+                timeRemaining--;
+                display.innerText = `${Math.floor(timeRemaining / 60).toString().padStart(2, '0')}:${(timeRemaining % 60).toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function changeFontSize(direction) {
+            fontSizeScale = Math.max(80, Math.min(150, fontSizeScale + direction * 10));
+            document.getElementById('font-size-label').innerText = `${fontSizeScale}%`;
+            document.getElementById('question-passage').style.fontSize = `${fontSizeScale}%`;
+            document.getElementById('question-prompt').style.fontSize = `${fontSizeScale}%`;
+            saveProgress();
+        }
+
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            document.getElementById('theme-icon').className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
+            localStorage.setItem('sat_40q_dark', isDark);
+        }
+
+        function applySavedTheme() {
+            if (localStorage.getItem('sat_40q_dark') === 'true') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('theme-icon').className = "fa-solid fa-sun";
+            }
+        }
+
+        function saveProgress() {
+            localStorage.setItem('sat_40q_pool_state_v3', JSON.stringify({ satQuestions, userAnswers, currentIndex, timeRemaining, fontSizeScale, revealedExplanations }));
+        }
+
+        function loadProgress(saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                satQuestions = parsed.satQuestions || [];
+                userAnswers = parsed.userAnswers || {};
+                currentIndex = parsed.currentIndex || 0;
+                timeRemaining = parsed.timeRemaining || 4800;
+                fontSizeScale = parsed.fontSizeScale || 100;
+                revealedExplanations = parsed.revealedExplanations || {};
+                document.getElementById('font-size-label').innerText = `${fontSizeScale}%`;
+                renderSidebar();
+                displayQuestion();
+            } catch (e) {
+                buildRandom40Questions();
+            }
+        }
+
+        function generateNewTestSet() {
+            if (confirm("도형 및 지문을 새로고침 하시겠습니까?")) buildRandom40Questions();
+        }
+
+        function resetAnswersOnly() {
+            if (confirm("답안 기록을 초기화하시겠습니까?")) {
+                userAnswers = {}; revealedExplanations = {}; saveProgress(); renderSidebar(); displayQuestion();
+            }
+        }
+    </script>
+</body>
+</html>
