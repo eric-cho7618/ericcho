@@ -54,18 +54,23 @@
                         <i class="fa-solid fa-arrows-rotate mr-1"></i> Regenerate
                     </button>
                 </div>
-                <div id="question-grid" class="grid grid-cols-4 gap-2 custom-scrollbar overflow-y-auto max-h-[68vh] pr-1">
+                <div id="question-grid" class="grid grid-cols-4 gap-2 custom-scrollbar overflow-y-auto max-h-[60vh] pr-1">
                     </div>
             </div>
             
-            <div class="mt-4 border-t border-slate-100 pt-4 dark:border-slate-700">
-                <div class="flex justify-between text-xs font-medium mb-1 text-slate-500 dark:text-slate-400">
-                    <span>Progress</span>
-                    <span id="progress-text">0/40 Answered</span>
+            <div class="mt-4 border-t border-slate-100 pt-4 dark:border-slate-700 space-y-3">
+                <div>
+                    <div class="flex justify-between text-xs font-medium mb-1 text-slate-500 dark:text-slate-400">
+                        <span>Progress</span>
+                        <span id="progress-text">0/40 Answered</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2 dark:bg-slate-700">
+                        <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
                 </div>
-                <div class="w-full bg-slate-100 rounded-full h-2 mb-4 dark:bg-slate-700">
-                    <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
-                </div>
+                <button onclick="calculateFinalScore()" class="w-full bg-emerald-600 text-white font-bold py-2.5 rounded-xl hover:bg-emerald-700 transition text-sm shadow-sm">
+                    <i class="fa-solid fa-paper-plane mr-1"></i> Submit & View Score
+                </button>
                 <button onclick="resetAnswersOnly()" class="w-full bg-slate-100 text-slate-600 font-medium py-2 rounded-xl hover:bg-slate-200 transition text-xs dark:bg-slate-700 dark:text-slate-300">
                     <i class="fa-solid fa-eraser"></i> Clear Marks
                 </button>
@@ -73,42 +78,82 @@
         </aside>
 
         <main class="flex-1 p-6 lg:p-12 flex flex-col justify-between max-w-4xl mx-auto">
-            <div id="question-card" class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 mb-8 transition-all dark:bg-slate-800 dark:border-slate-700">
-                <span id="question-tag" class="inline-block bg-blue-50 text-blue-600 text-xs font-mono font-bold px-3 py-1 rounded-full mb-6 uppercase tracking-wide dark:bg-blue-950/50 dark:text-blue-400">
-                    Domain loading...
-                </span>
-                
-                <div id="graphic-container" class="mb-6 flex justify-center bg-slate-50 rounded-xl p-6 border border-slate-100 dark:bg-slate-900/50 dark:border-slate-700"></div>
-                
-                <div id="question-passage" class="prose max-w-none text-slate-700 mb-6 leading-relaxed dark:text-slate-300"></div>
+            <div id="test-interface">
+                <div id="question-card" class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 mb-8 transition-all dark:bg-slate-800 dark:border-slate-700">
+                    <div class="flex justify-between items-center mb-6">
+                        <span id="question-tag" class="inline-block bg-blue-50 text-blue-600 text-xs font-mono font-bold px-3 py-1 rounded-full uppercase tracking-wide dark:bg-blue-950/50 dark:text-blue-400">
+                            Domain loading...
+                        </span>
+                        <span class="text-xs text-slate-400 font-mono italic">Note: Figure not necessarily drawn to scale.</span>
+                    </div>
+                    
+                    <div id="graphic-container" class="mb-6 flex justify-center bg-white border border-slate-200 rounded-xl p-8 dark:bg-slate-900 dark:border-slate-700 shadow-inner"></div>
+                    
+                    <div id="question-passage" class="prose max-w-none text-slate-700 mb-6 leading-relaxed dark:text-slate-300"></div>
 
-                <p id="question-prompt" class="font-semibold text-lg mb-8 text-slate-900 dark:text-white"></p>
+                    <p id="question-prompt" class="font-semibold text-lg mb-8 text-slate-900 dark:text-white"></p>
 
-                <div id="options-container" class="space-y-3.5 mb-8"></div>
+                    <div id="options-container" class="space-y-3.5 mb-8"></div>
 
-                <div id="explanation-box" class="hidden mt-6 p-5 bg-emerald-50 border border-emerald-200 rounded-xl dark:bg-emerald-950/30 dark:border-emerald-800/50">
-                    <div class="flex items-start space-x-3">
-                        <i class="fa-solid fa-circle-check text-emerald-500 text-xl mt-0.5"></i>
-                        <div>
-                            <h4 class="font-bold text-emerald-900 dark:text-emerald-400 mb-1">Geometric Strategy & Logic</h4>
-                            <p id="explanation-text" class="text-sm text-emerald-800 leading-relaxed dark:text-emerald-300"></p>
+                    <div id="explanation-box" class="hidden mt-6 p-5 bg-emerald-50 border border-emerald-200 rounded-xl dark:bg-emerald-950/30 dark:border-emerald-800/50">
+                        <div class="flex items-start space-x-3">
+                            <i class="fa-solid fa-circle-check text-emerald-500 text-xl mt-0.5"></i>
+                            <div>
+                                <h4 class="font-bold text-emerald-900 dark:text-emerald-400 mb-1">Geometric Strategy & Logic</h4>
+                                <p id="explanation-text" class="text-sm text-emerald-800 leading-relaxed dark:text-emerald-300"></p>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="flex justify-between items-center">
+                    <button id="btn-prev" onclick="navigateQuestion(-1)" class="px-5 py-3 rounded-xl border border-slate-200 font-medium hover:bg-slate-100 transition disabled:opacity-40 disabled:hover:bg-transparent dark:border-slate-700 dark:hover:bg-slate-700">
+                        <i class="fa-solid fa-arrow-left mr-2"></i> Previous
+                    </button>
+                    
+                    <button id="btn-reveal" onclick="toggleExplanation()" class="px-5 py-3 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 transition dark:bg-slate-700 dark:text-slate-200">
+                        <i class="fa-regular fa-lightbulb mr-2"></i> Check Logic
+                    </button>
+
+                    <button id="btn-next" onclick="navigateQuestion(1)" class="px-5 py-3 rounded-xl bg-slate-900 text-white font-medium hover:bg-slate-800 shadow-md transition dark:bg-blue-600 dark:hover:bg-blue-700">
+                        Next <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
             </div>
 
-            <div class="flex justify-between items-center">
-                <button id="btn-prev" onclick="navigateQuestion(-1)" class="px-5 py-3 rounded-xl border border-slate-200 font-medium hover:bg-slate-100 transition disabled:opacity-40 disabled:hover:bg-transparent dark:border-slate-700 dark:hover:bg-slate-700">
-                    <i class="fa-solid fa-arrow-left mr-2"></i> Previous
-                </button>
-                
-                <button id="btn-reveal" onclick="toggleExplanation()" class="px-5 py-3 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 transition dark:bg-slate-700 dark:text-slate-200">
-                    <i class="fa-regular fa-lightbulb mr-2"></i> Check Logic
-                </button>
+            <div id="score-report" class="hidden bg-white rounded-2xl p-8 shadow-md border border-slate-200 dark:bg-slate-800 dark:border-slate-700">
+                <div class="text-center border-b border-slate-100 pb-6 dark:border-slate-700 mb-6">
+                    <i class="fa-solid fa-trophy text-5xl text-amber-500 mb-3 animate-bounce"></i>
+                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Your Test Performance Summary</h2>
+                    <p class="text-sm text-slate-400 mt-1">Digital SAT Simulated Diagnostics Result</p>
+                </div>
 
-                <button id="btn-next" onclick="navigateQuestion(1)" class="px-5 py-3 rounded-xl bg-slate-900 text-white font-medium hover:bg-slate-800 shadow-md transition dark:bg-blue-600 dark:hover:bg-blue-700">
-                    Next <i class="fa-solid fa-arrow-right ml-2"></i>
-                </button>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-slate-900 text-white p-6 rounded-xl text-center dark:bg-slate-950">
+                        <span class="text-xs uppercase font-mono text-slate-400 tracking-wider">Estimated Total Score</span>
+                        <div id="total-score-val" class="text-4xl font-extrabold mt-2 text-amber-400">200 - 800</div>
+                        <p class="text-[11px] text-slate-400 mt-1">Based on standard SAT curves</p>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-100 p-6 rounded-xl text-center dark:bg-blue-950/40 dark:border-blue-900">
+                        <span class="text-xs uppercase font-mono text-blue-600 dark:text-blue-400 tracking-wider">Math Accuracy</span>
+                        <div id="math-accuracy-val" class="text-3xl font-bold mt-2 text-slate-800 dark:text-white">0 / 20</div>
+                        <p id="math-pct" class="text-xs text-blue-500 mt-1 font-semibold">0%</p>
+                    </div>
+                    <div class="bg-purple-50 border border-purple-100 p-6 rounded-xl text-center dark:bg-purple-950/40 dark:border-purple-900">
+                        <span class="text-xs uppercase font-mono text-purple-600 dark:text-purple-400 tracking-wider">R&W Accuracy</span>
+                        <div id="rw-accuracy-val" class="text-3xl font-bold mt-2 text-slate-800 dark:text-white">0 / 20</div>
+                        <p id="rw-pct" class="text-xs text-purple-500 mt-1 font-semibold">0%</p>
+                    </div>
+                </div>
+
+                <div class="flex justify-center space-x-4">
+                    <button onclick="backToTest()" class="px-5 py-2.5 rounded-xl border border-slate-300 text-sm font-medium hover:bg-slate-100 transition dark:border-slate-600 dark:hover:bg-slate-700">
+                        <i class="fa-solid fa-magnifying-glass mr-1"></i> Review Questions
+                    </button>
+                    <button onclick="generateNewTestSet(); backToTest();" class="px-5 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-700 transition shadow">
+                        <i class="fa-solid fa-repeat mr-1"></i> Start New Test
+                    </button>
+                </div>
             </div>
         </main>
     </div>
@@ -131,7 +176,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             applySavedTheme();
-            const savedState = localStorage.getItem('sat_40q_pool_state_v3');
+            const savedState = localStorage.getItem('sat_40q_pool_state_v5');
             if (savedState) {
                 loadProgress(savedState);
             } else {
@@ -156,52 +201,52 @@
                         const radius = modifier * 3;
                         const arcAngle = 110;
                         satQuestions.push({
-                            id: i, tag: "Math: Geometry (Circle Theorems)",
-                            graphic: `<svg width="160" height="160" viewBox="0 0 160 160" class="stroke-slate-800 dark:stroke-slate-200 fill-none stroke-2"><circle cx="80" cy="80" r="60" /><line x1="80" y1="80" x2="80" y2="20" /><line x1="80" y1="80" x2="136" y2="102" /><line x1="80" y1="20" x2="23" y2="100" /><line x1="136" y1="102" x2="23" y2="100" /><text x="85" y="70" class="fill-current stroke-none text-xs font-bold">O</text><text x="85" y="50" class="fill-current stroke-none text-xs text-amber-500 font-mono">${arcAngle}°</text></svg>`,
-                            passage: `In the circle centered at $O$ shown above, the central angle measures exactly $${arcAngle}^\\circ$ and the radius is $r = ${radius}$.`,
-                            prompt: "What is the degree measure of the inscribed angle that intercepts the same minor arc?",
+                            id: i, tag: "Math: Geometry (Circle Theorems)", isMath: true,
+                            graphic: `<svg width="220" height="220" viewBox="0 0 220 220" class="stroke-slate-900 dark:stroke-slate-100 fill-none" style="stroke-width: 1.5px;"><circle cx="110" cy="110" r="80" /><line x1="110" y1="110" x2="110" y2="30" /><line x1="110" y1="110" x2="185" y2="138" /><line x1="110" y1="30" x2="35" y2="135" /><line x1="185" y1="138" x2="35" y2="135" /><circle cx="110" cy="110" r="2" class="fill-current" /><text x="114" y="115" class="fill-current stroke-none text-[11px] font-mono font-bold">O</text><text x="106" y="24" class="fill-current stroke-none text-[11px] font-mono">B</text><text x="23" y="142" class="fill-current stroke-none text-[11px] font-mono">A</text><text x="192" y="145" class="fill-current stroke-none text-[11px] font-mono">C</text><path d="M 110 90 A 20 20 0 0 1 128 116" style="stroke-width: 1px;" /><text x="116" y="82" class="fill-amber-600 dark:fill-amber-400 stroke-none text-xs font-mono font-bold">${arcAngle}°</text></svg>`,
+                            passage: `In the circle centered at $O$ shown above, points $A$, $B$, and $C$ lie on the circumference. The central angle $\\angle BOC$ measures exactly $${arcAngle}^\\circ$ and the radius vector is $r = ${radius}$.`,
+                            prompt: "What is the degree measure of the inscribed angle $\\angle BAC$?",
                             options: [`A) ${(arcAngle / 2).toFixed(1)}°`, `B) ${arcAngle}°`, `C) ${(arcAngle * 2)}°`, `D) ${(180 - arcAngle)}°`], correct: 0,
-                            explanation: `Correct answer: <b>A</b>.<br>By the Inscribed Angle Theorem, an inscribed angle is exactly half of the central angle that intercepts the same arc: $\\frac{${arcAngle}}{2} = ${(arcAngle / 2).toFixed(1)}^\\circ$.`
+                            explanation: `Correct answer: <b>A</b>.<br>By the Inscribed Angle Theorem, an inscribed angle $\\angle BAC$ is precisely half of the central angle $\\angle BOC$ that intercepts the identical arc: $\\frac{${arcAngle}}{2} = ${(arcAngle / 2).toFixed(1)}^\\circ$.`
                         });
                     } else if (geomType === 1) {
                         const r = modifier;
                         const h = modifier * 4;
                         const volumePi = r * r * h;
                         satQuestions.push({
-                            id: i, tag: "Math: Geometry (Advanced Volume)",
-                            graphic: `<svg width="150" height="150" viewBox="0 0 150 150" class="stroke-slate-800 dark:stroke-slate-200 fill-none stroke-2"><ellipse cx="75" cy="30" rx="40" ry="15" /><ellipse cx="75" cy="120" rx="40" ry="15" style="stroke-dasharray: 4 4;" /><line x1="35" y1="30" x2="35" y2="120" /><line x1="115" y1="30" x2="115" y2="120" /><line x1="75" y1="120" x2="115" y2="120" class="stroke-red-400" /><text x="90" y="115" class="fill-current stroke-none text-xs">r = ${r}</text><text x="125" y="75" class="fill-current stroke-none text-xs">h = ${h}</text></svg>`,
-                            passage: `A right circular cylinder has a base radius of $r = ${r}$ and a height of $h = ${h}$.`,
-                            prompt: "What is the total volume of the cylinder in terms of $\\pi$?",
+                            id: i, tag: "Math: Geometry (Advanced Volume)", isMath: true,
+                            graphic: `<svg width="220" height="220" viewBox="0 0 220 220" class="stroke-slate-900 dark:stroke-slate-100 fill-none" style="stroke-width: 1.5px;"><ellipse cx="110" cy="40" rx="55" ry="18" /><path d="M 55 40 L 55 180 A 55 18 0 0 0 165 180 L 165 40" /><path d="M 55 180 A 55 18 0 0 1 165 180" style="stroke-dasharray: 4 4;" /><line x1="110" y1="180" x2="165" y2="180" class="stroke-blue-500" style="stroke-width: 1.5px;" /><line x1="165" y1="40" x2="165" y2="180" class="stroke-red-500" style="stroke-dasharray: 2 2;" /><circle cx="110" cy="180" r="2" class="fill-current" /><text x="130" y="174" class="fill-blue-600 dark:fill-blue-400 stroke-none text-xs font-mono">r = ${r}</text><text x="175" y="114" class="fill-red-600 dark:fill-red-400 stroke-none text-xs font-mono">h = ${h}</text></svg>`,
+                            passage: `A right circular cylinder has a baseline radius configuration of $r = ${r}$ and a strict vertical cylinder height of $h = ${h}$.`,
+                            prompt: "What is the total internal volume capacity of the cylinder asset in terms of $\\pi$?",
                             options: [`A) $${volumePi}\\pi$`, `B) $${r * h}\\pi$`, `C) $${r * 2 * h}\\pi$`, `D) $${(volumePi / 3).toFixed(0)}\\pi$`], correct: 0,
-                            explanation: `Correct answer: <b>A</b>.<br>The volume formula is $V = \\pi r^2 h$. Substituting variables: $V = \\pi (${r})^2 (${h}) = ${volumePi}\\pi$.`
+                            explanation: `Correct answer: <b>A</b>.<br>The geometric cylindrical volume equation is defined as $V = \\pi r^2 h$. Substituting the parameters: $V = \\pi (${r})^2 (${h}) = ${volumePi}\\pi$.`
                         });
                     } else if (geomType === 2) {
                         const bShort = modifier * 2;
                         const bLong = modifier * 5;
                         satQuestions.push({
-                            id: i, tag: "Math: Geometry (Similar Triangles)",
-                            graphic: `<svg width="180" height="130" viewBox="0 0 180 130" class="stroke-slate-800 dark:stroke-slate-200 fill-none stroke-2"><polygon points="20,110 160,110 90,20" /><line x1="48" y1="75" x2="132" y2="75" /><text x="85" y="70" class="fill-current stroke-none text-xs">${bShort}</text><text x="85" y="125" class="fill-current stroke-none text-xs">${bLong}</text></svg>`,
-                            passage: `The horizontal interior line segment is parallel to the base. The upper base is $${bShort}$ and the bottom base is $${bLong}$.`,
-                            prompt: "If the total height of the large triangle is 50, what is the height of the smaller top triangle?",
+                            id: i, tag: "Math: Geometry (Similar Triangles)", isMath: true,
+                            graphic: `<svg width="220" height="180" viewBox="0 0 220 180" class="stroke-slate-900 dark:stroke-slate-100 fill-none" style="stroke-width: 1.5px;"><polygon points="30,150 190,150 110,20" /><line x1="62" y1="95" x2="158" y2="95" style="stroke-width: 1.5px;" /><text x="106" y="14" class="fill-current stroke-none text-[11px] font-mono">A</text><text x="18" y="156" class="fill-current stroke-none text-[11px] font-mono">B</text><text x="195" y="156" class="fill-current stroke-none text-[11px] font-mono">C</text><text x="50" y="94" class="fill-current stroke-none text-[11px] font-mono">D</text><text x="162" y="94" class="fill-current stroke-none text-[11px] font-mono">E</text><text x="104" y="90" class="fill-blue-600 dark:fill-blue-400 stroke-none text-xs font-mono font-bold">${bShort}</text><text x="104" y="165" class="fill-slate-500 stroke-none text-xs font-mono font-bold">${bLong}</text></svg>`,
+                            passage: `In the triangle system $\\triangle ABC$ shown above, segment line $DE$ is strictly parallel to the baseline $BC$. The segment length of $DE = ${bShort}$ and $BC = ${bLong}$.`,
+                            prompt: "If the total perpendicular height of the macro triangle $\\triangle ABC$ is exactly 50, what is the altitude height of the smaller inner triangle $\\triangle ADE$?",
                             options: [`A) ${(50 * bShort / bLong).toFixed(1)}`, `B) ${bShort + bLong}`, `C) 25.0`, `D) ${(50 * bLong / bShort).toFixed(1)}`], correct: 0,
-                            explanation: `Correct answer: <b>A</b>.<br>Using similarity ratio: $\\frac{h}{50} = \\frac{${bShort}}{${bLong}} \\rightarrow h = ${(50 * bShort / bLong).toFixed(1)}$.`
+                            explanation: `Correct answer: <b>A</b>.<br>By AA Similarity rule, $\\triangle ADE \\sim \\triangle ABC$. The ratio of heights equals the ratio of corresponding bases: $\\frac{h}{50} = \\frac{${bShort}}{${bLong}} \\rightarrow h = ${(50 * bShort / bLong).toFixed(1)}$.`
                         });
                     } else {
-                        // [대수 수식형 포함 문항] - 판별식 킬러문항 수식 동적 부여
-                        const cVal = modifier * 4; 
+                        const sideA = modifier;
                         satQuestions.push({
-                            id: i, tag: "Math: Advanced Algebra (Systems)",
-                            passage: `Consider the equation where $k$ is a constant: $$4x^2 - 4x + (k - ${cVal}) = 0$$`,
-                            prompt: "If the given equation has no real solutions, which choice could be the value of $k$?",
-                            options: [`A) ${cVal + 2}`, `B) ${cVal - 5}`, `C) 0`, `D) -1`], correct: 0,
-                            explanation: `Correct answer: <b>A</b>.<br>For no real solutions, $D = b^2 - 4ac < 0$. $16 - 16(k - ${cVal}) < 0 \\rightarrow k > ${cVal + 1}$.`
+                            id: i, tag: "Math: Geometry (Right Triangles)", isMath: true,
+                            graphic: `<svg width="220" height="180" viewBox="0 0 220 180" class="stroke-slate-900 dark:stroke-slate-100 fill-none" style="stroke-width: 1.5px;"><polygon points="40,140 180,140 40,30" /><path d="M 40 128 L 52 128 L 52 140" style="stroke-width: 1px;" /><text x="30" y="26" class="fill-current stroke-none text-[11px] font-mono">X</text><text x="28" y="146" class="fill-current stroke-none text-[11px] font-mono">Y</text><text x="185" y="146" class="fill-current stroke-none text-[11px] font-mono">Z</text><text x="20" y="90" class="fill-blue-600 dark:fill-blue-400 stroke-none text-xs font-mono">${sideA}</text><text x="110" y="155" class="fill-slate-500 stroke-none text-xs font-mono">4</text></svg>`,
+                            passage: `In the right triangle $\\triangle XYZ$ shown above, angle $\\angle XYZ$ is exactly $90^\\circ$. The side lengths are given as $XY = ${sideA}$ and $YZ = 4$.`,
+                            prompt: "What is the exact calculated tangent value of angle $\\angle XZY$?",
+                            options: [`A) $\\frac{${sideA}}{4}$`, `B) $\\frac{4}{${sideA}}$`, `C) $\\frac{4}{\\sqrt{${sideA*sideA + 16}}}$`, `D) 1`], correct: 0,
+                            explanation: `Correct answer: <b>A</b>.<br>By trigonometric functions rule, $\\tan(\\angle XZY) = \\frac{\\text{Opposite}}{\\text{Adjacent}} = \\frac{XY}{YZ} = \\frac{${sideA}}{4}$.`
                         });
                     }
                 } else {
                     let template = rwMasterPool[rwTrackIndex % rwMasterPool.length];
                     rwTrackIndex++;
                     satQuestions.push({
-                        id: i, tag: template.tag, passage: template.text, prompt: template.prompt, options: template.options, correct: template.correct,
+                        id: i, tag: template.tag, isMath: false, passage: template.text, prompt: template.prompt, options: template.options, correct: template.correct,
                         explanation: `Correct answer: <b>${String.fromCharCode(65 + template.correct)}</b>. Fits standard SAT contextual paradigms.`
                     });
                 }
@@ -257,7 +302,6 @@
                 expBox.classList.add('hidden');
             }
 
-            // ⭐ [핵심 수정] DOM 변경 완료 후 MathJax 렌더링 스케줄을 브라우저 렌더 큐 후순위로 안전하게 위임
             setTimeout(() => {
                 if (window.MathJax && window.MathJax.typesetPromise) {
                     window.MathJax.typesetPromise([
@@ -268,6 +312,46 @@
                     ]).catch((err) => console.log(err));
                 }
             }, 50);
+        }
+
+        // 📊 [신규 함수] 오답 정답 매칭 및 SAT 가공 총점 계산기
+        function calculateFinalScore() {
+            let mathCorrect = 0;
+            let rwCorrect = 0;
+            let mathTotal = 0;
+            let rwTotal = 0;
+
+            satQuestions.forEach(q => {
+                const isCorrect = userAnswers[q.id] === q.correct;
+                if (q.isMath) {
+                    mathTotal++;
+                    if (isCorrect) mathCorrect++;
+                } else {
+                    rwTotal++;
+                    if (isCorrect) rwCorrect++;
+                }
+            });
+
+            // SAT 섹션 점수 환산 곡선 시뮬레이션 (최소 200, 최대 400점씩 배정하여 스케일링)
+            const mathBaseScore = 200 + Math.round((mathCorrect / mathTotal) * 400);
+            const rwBaseScore = 200 + Math.round((rwCorrect / rwTotal) * 400);
+            const totalScore = mathBaseScore + rwBaseScore;
+
+            // UI 바인딩
+            document.getElementById('total-score-val').innerText = `${totalScore} / 800`;
+            document.getElementById('math-accuracy-val').innerText = `${mathCorrect} / ${mathTotal}`;
+            document.getElementById('math-pct').innerText = `${Math.round((mathCorrect / mathTotal) * 100)}% Accuracy`;
+            document.getElementById('rw-accuracy-val').innerText = `${rwCorrect} / ${rwTotal}`;
+            document.getElementById('rw-pct').innerText = `${Math.round((rwCorrect / rwTotal) * 100)}% Accuracy`;
+
+            // 인터페이스 토글
+            document.getElementById('test-interface').classList.add('hidden');
+            document.getElementById('score-report').classList.remove('hidden');
+        }
+
+        function backToTest() {
+            document.getElementById('score-report').classList.add('hidden');
+            document.getElementById('test-interface').classList.remove('hidden');
         }
 
         function selectOption(idx) {
@@ -351,7 +435,7 @@
         }
 
         function saveProgress() {
-            localStorage.setItem('sat_40q_pool_state_v3', JSON.stringify({ satQuestions, userAnswers, currentIndex, timeRemaining, fontSizeScale, revealedExplanations }));
+            localStorage.setItem('sat_40q_pool_state_v5', JSON.stringify({ satQuestions, userAnswers, currentIndex, timeRemaining, fontSizeScale, revealedExplanations }));
         }
 
         function loadProgress(saved) {
