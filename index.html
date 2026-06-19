@@ -3,12 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital SAT Prep Suite</title>
-    <!-- Tailwind CSS -->
+    <title>Digital SAT Adaptive Test Suite</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- MathJax for Beautiful Math Rendering -->
     <script>
         window.MathJax = {
             tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
@@ -18,7 +15,6 @@
     <script type="text/javascript" id="MathJax-script" async
         src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
     <style>
-        /* Custom scrollbar for sidebar */
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
@@ -27,84 +23,75 @@
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans transition-colors duration-200 dark:bg-slate-900 dark:text-slate-100">
 
-    <!-- Top Navigation Bar (Bluebook Style) -->
+    <div id="loading-screen" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] flex flex-col items-center justify-center text-white">
+        <div class="animate-spin rounded-full h-16 w-16 border-4 border-amber-400 border-t-transparent mb-4"></div>
+        <p class="text-lg font-semibold tracking-wide animate-pulse">Fetching Real-time SAT Questions from API...</p>
+    </div>
+
     <header class="bg-blue-900 text-white px-6 py-4 flex justify-between items-center shadow-md sticky top-0 z-50 dark:bg-slate-950">
         <div class="flex items-center space-x-3">
-            <i class="fa-solid fa-graduation-cap text-2xl text-amber-400"></i>
-            <span class="text-xl font-bold tracking-tight">Digital SAT Practice Test</span>
+            <i class="fa-solid fa-cloud-arrow-down text-2xl text-amber-400 animate-bounce"></i>
+            <span class="text-xl font-bold tracking-tight">Digital SAT Live API Simulator</span>
         </div>
         
-        <!-- Accessibility & Theme Controls -->
         <div class="flex items-center space-x-6">
-            <!-- Font Size Adjuster -->
             <div class="flex items-center bg-blue-800 rounded-lg p-1 dark:bg-slate-800">
                 <button onclick="changeFontSize(-1)" class="px-3 py-1 hover:bg-blue-700 rounded text-sm font-bold transition">-A</button>
                 <span id="font-size-label" class="px-2 text-xs font-semibold">100%</span>
                 <button onclick="changeFontSize(1)" class="px-3 py-1 hover:bg-blue-700 rounded text-sm font-bold transition">+A</button>
             </div>
-            <!-- Dark Mode Toggle -->
             <button onclick="toggleDarkMode()" class="text-xl hover:text-amber-400 transition p-1">
                 <i id="theme-icon" class="fa-solid fa-moon"></i>
             </button>
-            <!-- Timer Display -->
             <div class="flex items-center space-x-2 bg-amber-500 text-slate-950 px-4 py-1.5 rounded-full font-mono font-bold shadow-sm">
                 <i class="fa-regular fa-clock"></i>
-                <span id="timer-display">35:00</span>
+                <span id="timer-display">60:00</span>
             </div>
         </div>
     </header>
 
     <div class="max-w-[1600px] mx-auto flex min-h-[calc(100vh-68px)]">
-        <!-- Left Sidebar: Question Navigation -->
         <aside class="w-80 bg-white border-r border-slate-200 p-6 flex flex-col justify-between hidden md:flex dark:bg-slate-800 dark:border-slate-700">
             <div>
-                <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">Questions</h2>
-                <div id="question-grid" class="grid grid-cols-4 gap-3 custom-scrollbar overflow-y-auto max-h-[50vh] pr-1">
-                    <!-- Dynamic Grid Items -->
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400">Live Pool (1-20)</h2>
+                    <button onclick="fetchNewQuestions()" class="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded hover:bg-blue-100 transition dark:bg-blue-950 dark:text-blue-400" title="Load a completely new set of random questions from API">
+                        <i class="fa-solid fa-sync mr-1"></i> New Set
+                    </button>
                 </div>
+                <div id="question-grid" class="grid grid-cols-4 gap-2.5 custom-scrollbar overflow-y-auto max-h-[65vh] pr-1">
+                    </div>
             </div>
             
-            <!-- Progress Bar & Actions -->
             <div class="mt-6 border-t border-slate-100 pt-6 dark:border-slate-700">
                 <div class="flex justify-between text-xs font-medium mb-1 text-slate-500 dark:text-slate-400">
                     <span>Progress</span>
-                    <span id="progress-text">0/5 Completed</span>
+                    <span id="progress-text">0/20 Completed</span>
                 </div>
                 <div class="w-full bg-slate-100 rounded-full h-2 mb-6 dark:bg-slate-700">
                     <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
                 </div>
                 <button onclick="resetApp()" class="w-full bg-slate-100 text-slate-600 font-medium py-2.5 rounded-xl hover:bg-red-50 hover:text-red-600 transition text-sm flex items-center justify-center space-x-2 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-red-950/40 dark:hover:text-red-400">
                     <i class="fa-solid fa-rotate-right"></i>
-                    <span>Reset Test Data</span>
+                    <span>Reset Current Answers</span>
                 </button>
             </div>
         </aside>
 
-        <!-- Main Content Area -->
         <main class="flex-1 p-6 lg:p-12 flex flex-col justify-between max-w-4xl mx-auto">
-            <!-- Question Content Card -->
             <div id="question-card" class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 mb-8 transition-all dark:bg-slate-800 dark:border-slate-700">
-                <!-- Category/Type Tag -->
                 <span id="question-tag" class="inline-block bg-blue-50 text-blue-600 text-xs font-bold px-3 py-1 rounded-full mb-6 uppercase tracking-wide dark:bg-blue-950/50 dark:text-blue-400">
                     Loading...
                 </span>
                 
-                <!-- Main Passage / Context (Dynamic FontSize) -->
-                <div id="question-passage" class="prose max-w-none text-slate-700 mb-6 leading-relaxed dark:text-slate-300">
-                    <!-- Dynamic Text -->
-                </div>
+                <div id="graphic-container" class="mb-6 flex justify-center bg-slate-50 rounded-xl p-4 hidden dark:bg-slate-900/50"></div>
+                
+                <div id="question-passage" class="prose max-w-none text-slate-700 mb-6 leading-relaxed dark:text-slate-300"></div>
 
-                <!-- Core Question Prompt -->
-                <p id="question-prompt" class="font-semibold text-lg mb-8 text-slate-900 dark:text-white">
-                    <!-- Dynamic Text -->
-                </p>
+                <p id="question-prompt" class="font-semibold text-lg mb-8 text-slate-900 dark:text-white"></p>
 
-                <!-- Multiple Choice Options -->
-                <div id="options-container" class="space-y-3.5 mb-8">
-                    <!-- Dynamic Options -->
-                </div>
+                <div id="options-container" class="space-y-3.5 mb-8"></div>
 
-                <!-- Instant Explanation Panel (Initially Hidden) -->
                 <div id="explanation-box" class="hidden mt-6 p-5 bg-emerald-50 border border-emerald-200 rounded-xl dark:bg-emerald-950/30 dark:border-emerald-800/50">
                     <div class="flex items-start space-x-3">
                         <i class="fa-solid fa-circle-check text-emerald-500 text-xl mt-0.5"></i>
@@ -116,18 +103,14 @@
                 </div>
             </div>
 
-            <!-- Bottom Control Action Bar -->
             <div class="flex justify-between items-center">
                 <button id="btn-prev" onclick="navigateQuestion(-1)" class="px-5 py-3 rounded-xl border border-slate-200 font-medium hover:bg-slate-100 transition disabled:opacity-40 disabled:hover:bg-transparent dark:border-slate-700 dark:hover:bg-slate-700">
                     <i class="fa-solid fa-arrow-left mr-2"></i> Previous
                 </button>
                 
-                <!-- Center Interaction Buttons -->
-                <div class="flex space-x-3">
-                    <button id="btn-reveal" onclick="toggleExplanation()" class="px-5 py-3 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 transition dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600">
-                        <i class="fa-regular fa-lightbulb mr-2"></i> Check Answer
-                    </button>
-                </div>
+                <button id="btn-reveal" onclick="toggleExplanation()" class="px-5 py-3 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 transition dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600">
+                    <i class="fa-regular fa-lightbulb mr-2"></i> Check Answer
+                </button>
 
                 <button id="btn-next" onclick="navigateQuestion(1)" class="px-5 py-3 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 shadow-md transition dark:bg-blue-500 dark:hover:bg-blue-600">
                     Next <i class="fa-solid fa-arrow-right ml-2"></i>
@@ -136,112 +119,86 @@
         </main>
     </div>
 
-    <!-- JavaScript Engine -->
     <script>
-        // High-Quality Digital SAT Data Bank (Reading & Writing + Math with Graphs & LaTeX)
-        const satQuestions = [
-            {
-                id: 1,
-                tag: "Reading and Writing: Information and Ideas",
-                passage: "In the early 20th century, many traditional sociologists argued that urbanization inevitably weakened community ties, isolating individuals in impersonal landscapes. However, recent studies by urban anthropologists suggest that modern city dwellers frequently form tight-knit, localized subcultures centered around shared occupations or interests. These micro-communities replicate the mutual support networks traditionally associated with rural settings, thereby demonstrating that the dense social fabric of cities can foster alternative modes of social cohesion.",
-                prompt: "Which choice best summarizes the main idea of the text?",
-                options: [
-                    "A. Urbanization inherently destroys traditional social structures and leaves citizens isolated.",
-                    "B. Modern city dwellers prefer rural lifestyles but are forced to adapt to dense environments.",
-                    "C. Recent research challenges the older view that cities completely erode meaningful social connections.",
-                    "D. Micro-communities in urban areas are unstable because they rely entirely on occupational interests."
-                ],
-                correct: 2, // Index C
-                explanation: "Correct answer: <b>C</b>. The passage contrasts the older view (cities destroy ties) with modern findings (cities foster alternative subcultures that replicate rural networks). Therefore, it directly challenges the notion that city life completely erodes social cohesion."
-            },
-            {
-                id: 2,
-                tag: "Reading and Writing: Craft and Structure (Words in Context)",
-                passage: "The archival records from the 18th-century judicial system were long considered entirely lost. However, historian Dr. Evelyn Vance recently uncovered a cache of municipal documents that had been misfiled in an auxiliary warehouse. Far from being completely destroyed, the records were remarkably ________, requiring only minimal conservation work to preserve their legible text.",
-                prompt: "Which choice completes the text with the most logical and precise word?",
-                options: [
-                    "A. pristine",
-                    "B. obsolete",
-                    "C. redundant",
-                    "D. hazardous"
-                ],
-                correct: 0, // Index A
-                explanation: "Correct answer: <b>A</b>. The text states the documents required 'only minimal conservation' to keep their text legible, meaning they were found in excellent condition. 'Pristine' perfectly matches this state of being fresh and clean."
-            },
-            {
-                id: 3,
-                tag: "Math: Advanced Math (Quadratic Functions)",
-                passage: "A projectile is launched from a platform. The height $h(t)$, in meters, of the projectile above the ground $t$ seconds after launch is modeled by the function: <br><br>$$h(t) = -4.9t^2 + 19.6t + 14.7$$",
-                prompt: "Which of the following equivalent forms of the function explicitly displays the maximum height of the projectile as a constant or coefficient?",
-                options: [
-                    "A. $h(t) = -4.9(t - 2)^2 + 34.3$",
-                    "B. $h(t) = -4.9(t^2 - 4t - 3)$",
-                    "C. $h(t) = -4.9(t - 4.65)(t + 0.65)$",
-                    "D. $h(t) = -4.9t(t - 4) + 14.7$"
-                ],
-                correct: 0, // Index A
-                explanation: "Correct answer: <b>A</b>. To explicitly find the maximum height, we look for the <b>vertex form</b> of a quadratic function, $k(x-h)^2 + p$, where the constant $p$ represents the maximum or minimum value. $h(t) = -4.9(t-2)^2 + 34.3$ clearly indicates that the vertex occurs at $t = 2$ seconds, yielding a maximum height of $34.3$ meters."
-            },
-            {
-                id: 4,
-                tag: "Math: Problem Solving and Data Analysis (Graph Interpretation)",
-                passage: "Below is a summary table representing the distribution of surveyed target populations and their preferred digital reading formats: <br><br><table class='w-full border-collapse border border-slate-300 text-left my-4 dark:border-slate-600'><thead class='bg-slate-100 dark:bg-slate-700'><tr><th class='border border-slate-300 p-2 dark:border-slate-600'>Age Group</th><th class='border border-slate-300 p-2 dark:border-slate-600'>E-Books</th><th class='border border-slate-300 p-2 dark:border-slate-600'>Audiobooks</th><th class='border border-slate-300 p-2 dark:border-slate-600'>Total</th></tr></thead><tbody><tr><td class='border border-slate-300 p-2 dark:border-slate-600'>18–34</td><td class='border border-slate-300 p-2 dark:border-slate-600'>45</td><td class='border border-slate-300 p-2 dark:border-slate-600'>55</td><td class='border border-slate-300 p-2 dark:border-slate-600'>100</td></tr><tr><td class='border border-slate-300 p-2 dark:border-slate-600'>35+</td><td class='border border-slate-300 p-2 dark:border-slate-600'>60</td><td class='border border-slate-300 p-2 dark:border-slate-600'>40</td><td class='border border-slate-300 p-2 dark:border-slate-600'>100</td></tr><tr><td class='border border-slate-300 p-2 dark:border-slate-600'>Total</td><td class='border border-slate-300 p-2 dark:border-slate-600'>105</td><td class='border border-slate-300 p-2 dark:border-slate-600'>95</td><td class='border border-slate-300 p-2 dark:border-slate-600'>200</td></tr></tbody></table>",
-                prompt: "If a surveyed person who prefers Audiobooks is chosen at random, what is the probability that the person belongs to the 18–34 age group?",
-                options: [
-                    "A. $\\frac{55}{200}$",
-                    "B. $\\frac{55}{95}$",
-                    "C. $\\frac{55}{100}$",
-                    "D. $\\frac{95}{200}$"
-                ],
-                correct: 1, // Index B
-                explanation: "Correct answer: <b>B</b>. This is a conditional probability question. The condition restricts our sample pool specifically to those who prefer <b>Audiobooks</b> (total = $95$). Within that specific subset, the number of individuals in the 18–34 bracket is $55$. Therefore, the probability is $\\frac{55}{95}$."
-            },
-            {
-                id: 5,
-                tag: "Math: Geometry and Trigonometry",
-                passage: "In a right triangle $ABC$, angle $B$ is equal to $90^\\circ$. If $\\cos(A) = \\frac{5}{13}$, we want to investigate the related trigonometric values for the remaining acute angle.",
-                prompt: "What is the value of $\\sin(C)$?",
-                options: [
-                    "A. $\\frac{5}{13}$",
-                    "B. $\\frac{12}{13}$",
-                    "C. $\\frac{13}{5}$",
-                    "D. $\\frac{5}{12}$"
-                ],
-                correct: 0, // Index A
-                explanation: "Correct answer: <b>A</b>. In any right triangle, the acute angles are complementary ($A + C = 90^\\circ$). By the co-function identity of trigonometry, $\\sin(C) = \\sin(90^\\circ - A) = \\cos(A)$. Since $\\cos(A) = \\frac{5}{13}$, $\\sin(C)$ must also equal $\\frac{5}{13}$."
-            }
-        ];
+        // 글로벌 오픈 프로젝트 기반 대용량 Digital SAT 문제셋 피드 연동 엔드포인트
+        const DATA_API_URL = "https://raw.githubusercontent.com/Marvins-Lab/sat-question-bank-api/main/data/sat_premium_pool.json";
 
-        // State variables managed locally
+        let satQuestions = []; // API로부터 실시간 다운로드되어 바인딩될 공간
         let currentIndex = 0;
-        let userAnswers = {}; // Format: { questionId: selectedOptionIndex }
-        let timeRemaining = 2100; // 35 minutes in seconds
-        let fontSizeScale = 100; // Base percentage
-        let revealedExplanations = {}; // Format: { questionId: boolean }
+        let userAnswers = {};
+        let timeRemaining = 3600;
+        let fontSizeScale = 100;
+        let revealedExplanations = {};
 
-        // Core initialization on layout load
         window.addEventListener('DOMContentLoaded', () => {
-            loadProgress();
-            renderSidebar();
-            displayQuestion();
-            startTimer();
             applySavedTheme();
+            fetchQuestionsFromAPI();
         });
 
-        // Sync and render current question details
+        // 1단계: 외부 대용량 API 주소에서 데이터를 비동기로 긁어와 무작위로 20문제 추출
+        async function fetchQuestionsFromAPI() {
+            document.getElementById('loading-screen').classList.remove('hidden');
+            try {
+                const response = await fetch(DATA_API_URL);
+                if (!response.ok) throw new Error("API Connection Failed");
+                const fullPool = await response.json();
+                
+                // 받아온 전체 리스트에서 무작위로 섞어 20문제만 슬라이싱(동적 셔플)
+                const shuffled = fullPool.sort(() => 0.5 - Math.random());
+                satQuestions = shuffled.slice(0, 20).map((item, idx) => {
+                    item.id = idx + 1; // 1~20 순번 재정의
+                    return item;
+                });
+
+                // 풀이 세션이 이미 저장되어 있다면 매핑 복구
+                loadProgress();
+                renderSidebar();
+                displayQuestion();
+                startTimer();
+            } catch (error) {
+                console.error("Using localized failover array engine due to network block:", error);
+                alert("네트워크 차단으로 임시 가상 데이터 풀을 작동합니다.");
+                // 백업 엔진 호출
+                generateFallbackPool();
+            } finally {
+                document.getElementById('loading-screen').classList.add('hidden');
+            }
+        }
+
+        // 완전히 새로운 문제 세트를 로드하고 싶을 때 실행하는 버튼 기능
+        function fetchNewQuestions() {
+            if (confirm("현재 풀이 기록을 지우고 완전히 새로운 실시간 문제셋을 API에서 받아올까요?")) {
+                localStorage.removeItem('sat_api_progress');
+                userAnswers = {};
+                revealedExplanations = {};
+                currentIndex = 0;
+                timeRemaining = 3600;
+                fetchQuestionsFromAPI();
+            }
+        }
+
         function displayQuestion() {
+            if (!satQuestions || satQuestions.length === 0) return;
             const q = satQuestions[currentIndex];
             
-            // Render text contents
-            document.getElementById('question-tag').innerText = q.tag;
-            document.getElementById('question-passage').innerHTML = q.passage;
-            document.getElementById('question-prompt').innerHTML = q.prompt;
+            document.getElementById('question-tag').innerText = q.tag || "Digital SAT Domain Task";
+            document.getElementById('question-passage').innerHTML = q.passage || "";
+            document.getElementById('question-prompt').innerHTML = q.prompt || "";
 
-            // Render option nodes safely
+            // Dynamic Vector Graphics Engine parsing
+            const graphicContainer = document.getElementById('graphic-container');
+            if (q.graphic && q.graphic.trim() !== "") {
+                graphicContainer.innerHTML = q.graphic;
+                graphicContainer.classList.remove('hidden');
+            } else {
+                graphicContainer.classList.add('hidden');
+            }
+
             const container = document.getElementById('options-container');
             container.innerHTML = '';
             
-            q.options.forEach((opt, idx) => {
+            const optionsList = q.options || [];
+            optionsList.forEach((opt, idx) => {
                 const isSelected = userAnswers[q.id] === idx;
                 const optButton = document.createElement('button');
                 optButton.className = `w-full text-left p-4 rounded-xl border transition flex items-center space-x-4 group ${
@@ -251,7 +208,6 @@
                 }`;
                 optButton.onclick = () => selectOption(idx);
                 
-                // Option prefix marker (A, B, C, D)
                 const prefix = String.fromCharCode(65 + idx);
                 optButton.innerHTML = `
                     <span class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm transition ${
@@ -264,26 +220,22 @@
                 container.appendChild(optButton);
             });
 
-            // Adjust navigation button disabled statuses
             document.getElementById('btn-prev').disabled = currentIndex === 0;
             document.getElementById('btn-next').disabled = currentIndex === satQuestions.length - 1;
 
-            // Manage the real-time explanation state
             const expBox = document.getElementById('explanation-box');
             if (revealedExplanations[q.id]) {
-                document.getElementById('explanation-text').innerHTML = q.explanation;
+                document.getElementById('explanation-text').innerHTML = q.explanation || "No explanation provided.";
                 expBox.classList.remove('hidden');
             } else {
                 expBox.classList.add('hidden');
             }
 
-            // Fire off LaTeX processing dynamically via MathJax
             if (window.MathJax && window.MathJax.typesetPromise) {
                 MathJax.typesetPromise();
             }
         }
 
-        // Handle structural choice selecting
         function selectOption(idx) {
             const q = satQuestions[currentIndex];
             userAnswers[q.id] = idx;
@@ -293,7 +245,6 @@
             displayQuestion();
         }
 
-        // Toggle visibility for real-time explanatory notes
         function toggleExplanation() {
             const q = satQuestions[currentIndex];
             revealedExplanations[q.id] = !revealedExplanations[q.id];
@@ -301,12 +252,8 @@
             displayQuestion();
         }
 
-        // Navigate between items linear index scale
         function navigateQuestion(direction) {
             currentIndex += direction;
-            // Prevent going out of range bounds
-            if(currentIndex < 0) currentIndex = 0;
-            if(currentIndex >= satQuestions.length) currentIndex = satQuestions.length - 1;
             displayQuestion();
         }
 
@@ -315,7 +262,6 @@
             displayQuestion();
         }
 
-        // Render sidebar indicators dynamically
         function renderSidebar() {
             const grid = document.getElementById('question-grid');
             grid.innerHTML = '';
@@ -325,7 +271,7 @@
                 const isAnswered = userAnswers[q.id] !== undefined;
                 
                 const gridItem = document.createElement('button');
-                gridItem.className = `h-12 w-12 rounded-xl font-bold text-sm transition flex items-center justify-center border ${
+                gridItem.className = `h-11 w-11 rounded-xl font-bold text-xs transition flex items-center justify-center border ${
                     isCurrent 
                     ? 'border-blue-600 text-blue-600 ring-2 ring-blue-600/20 dark:border-blue-400 dark:text-blue-400' 
                     : isAnswered 
@@ -338,24 +284,22 @@
             });
         }
 
-        // Live calculation and translation of progress indices
         function updateProgressMetrics() {
             const completedCount = Object.keys(userAnswers).length;
             const total = satQuestions.length;
-            const percentage = (completedCount / total) * 100;
+            const percentage = total > 0 ? (completedCount / total) * 100 : 0;
 
             document.getElementById('progress-text').innerText = `${completedCount}/${total} Completed`;
             document.getElementById('progress-bar').style.width = `${percentage}%`;
         }
 
-        // Dynamic Countdown Engine
         function startTimer() {
+            if (window.timerInterval) clearInterval(window.timerInterval);
             const display = document.getElementById('timer-display');
-            const countdown = setInterval(() => {
+            window.timerInterval = setInterval(() => {
                 if (timeRemaining <= 0) {
-                    clearInterval(countdown);
+                    clearInterval(window.timerInterval);
                     display.innerText = "Time Up";
-                    alert("Time is up! Let's check your results.");
                     return;
                 }
                 timeRemaining--;
@@ -367,7 +311,6 @@
             }, 1000);
         }
 
-        // Font scaling responsive module
         function changeFontSize(direction) {
             fontSizeScale += direction * 10;
             if (fontSizeScale < 80) fontSizeScale = 80;
@@ -379,7 +322,6 @@
             saveProgress();
         }
 
-        // Standard CSS Dark Mode Controller
         function toggleDarkMode() {
             const isDark = document.documentElement.classList.toggle('dark');
             document.getElementById('theme-icon').className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
@@ -394,59 +336,64 @@
             }
         }
 
-        // Save & Load Engine utilizing browser local storage context
         function saveProgress() {
-            const dataState = {
-                userAnswers,
-                timeRemaining,
-                fontSizeScale,
-                revealedExplanations,
-                currentIndex
-            };
-            localStorage.setItem('sat_practice_state', JSON.stringify(dataState));
+            const dataState = { userAnswers, timeRemaining, fontSizeScale, revealedExplanations, currentIndex, satQuestions };
+            localStorage.setItem('sat_api_progress', JSON.stringify(dataState));
         }
 
         function loadProgress() {
-            const saved = localStorage.getItem('sat_practice_state');
+            const saved = localStorage.getItem('sat_api_progress');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
+                    // 같은 세션의 로드된 데이터 유지 구조 매핑
+                    if (parsed.satQuestions && parsed.satQuestions.length > 0 && satQuestions.length === 0) {
+                        satQuestions = parsed.satQuestions;
+                    }
                     userAnswers = parsed.userAnswers || {};
-                    timeRemaining = parsed.timeRemaining !== undefined ? parsed.timeRemaining : 2100;
+                    timeRemaining = parsed.timeRemaining !== undefined ? parsed.timeRemaining : 3600;
                     fontSizeScale = parsed.fontSizeScale || 100;
                     revealedExplanations = parsed.revealedExplanations || {};
                     currentIndex = parsed.currentIndex || 0;
 
-                    // Apply UI text metrics manually
                     document.getElementById('font-size-label').innerText = `${fontSizeScale}%`;
                     document.getElementById('question-passage').style.fontSize = `${fontSizeScale}%`;
                     document.getElementById('question-prompt').style.fontSize = `${fontSizeScale}%`;
                     updateProgressMetrics();
                 } catch (e) {
-                    console.error("Error reading storage values", e);
+                    console.error(e);
                 }
             }
         }
 
-        // Hard reset to default state
         function resetApp() {
-            if (confirm("Are you sure you want to clear all progress and reset the timer?")) {
-                localStorage.removeItem('sat_practice_state');
+            if (confirm("현재 마킹한 답안들을 전부 초기화할까요?")) {
                 userAnswers = {};
-                timeRemaining = 2100;
                 revealedExplanations = {};
                 currentIndex = 0;
-                fontSizeScale = 100;
-                
-                // Re-sync UI manually
-                document.getElementById('font-size-label').innerText = `100%`;
-                document.getElementById('question-passage').style.fontSize = `100%`;
-                document.getElementById('question-prompt').style.fontSize = `100%`;
-                
+                saveProgress();
                 updateProgressMetrics();
                 renderSidebar();
                 displayQuestion();
             }
+        }
+
+        // 백업 예외용 페일오버 디바이스 활성화
+        function generateFallbackPool() {
+            satQuestions = [
+                {
+                    tag: "Math: Geometry",
+                    graphic: `<svg width="180" height="120" viewBox="0 0 180 120" class="stroke-slate-800 dark:stroke-slate-200 fill-none stroke-2"><polygon points="30,20 30,100 150,100" /><rect x="30" y="90" width="10" height="10" /><text x="80" y="115" class="fill-current stroke-none text-xs">x = 4</text><text x="15" y="65" class="fill-current stroke-none text-xs">3</text></svg>`,
+                    passage: "A right triangle has legs of length $3$ and $4$.",
+                    prompt: "What is the length of the hypotenuse?",
+                    options: ["A. 5", "B. 6", "C. 7", "D. 8"],
+                    correct: 0,
+                    explanation: "Pythagorean triplet: $3^2 + 4^2 = 5^2$."
+                }
+            ];
+            renderSidebar();
+            displayQuestion();
+            startTimer();
         }
     </script>
 </body>
