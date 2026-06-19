@@ -3,12 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital SAT Infinite Test Suite</title>
-    <!-- Tailwind CSS -->
+    <title>Digital SAT Advanced Hard Module Suite</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- MathJax Configuration -->
     <script>
         window.MathJax = {
             tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
@@ -26,42 +23,39 @@
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans transition-colors duration-200 dark:bg-slate-900 dark:text-slate-100">
 
-    <!-- Top Navigation Bar -->
-    <header class="bg-blue-900 text-white px-6 py-4 flex justify-between items-center shadow-md sticky top-0 z-50 dark:bg-slate-950">
+    <header class="bg-slate-900 text-white px-6 py-4 flex justify-between items-center shadow-md sticky top-0 z-50 dark:bg-slate-950">
         <div class="flex items-center space-x-3">
-            <i class="fa-solid fa-infinity text-2xl text-amber-400"></i>
-            <span class="text-xl font-bold tracking-tight">Digital SAT Infinite Practice Engine</span>
+            <i class="fa-solid fa-brain text-2xl text-red-400 animate-pulse"></i>
+            <span class="text-xl font-bold tracking-tight">Digital SAT <span class="text-red-400">Hard Module</span> Target 800</span>
         </div>
         
         <div class="flex items-center space-x-6">
-            <div class="flex items-center bg-blue-800 rounded-lg p-1 dark:bg-slate-800">
-                <button onclick="changeFontSize(-1)" class="px-3 py-1 hover:bg-blue-700 rounded text-sm font-bold transition">-A</button>
+            <div class="flex items-center bg-slate-800 rounded-lg p-1">
+                <button onclick="changeFontSize(-1)" class="px-3 py-1 hover:bg-slate-700 rounded text-sm font-bold transition">-A</button>
                 <span id="font-size-label" class="px-2 text-xs font-semibold">100%</span>
-                <button onclick="changeFontSize(1)" class="px-3 py-1 hover:bg-blue-700 rounded text-sm font-bold transition">+A</button>
+                <button onclick="changeFontSize(1)" class="px-3 py-1 hover:bg-slate-700 rounded text-sm font-bold transition">+A</button>
             </div>
             <button onclick="toggleDarkMode()" class="text-xl hover:text-amber-400 transition p-1">
-                <i id="theme-icon" class="fa-solid fa-moon"></i>
+                <i id="theme-icon" class="fa-solid fa-sun"></i>
             </button>
-            <div class="flex items-center space-x-2 bg-amber-500 text-slate-950 px-4 py-1.5 rounded-full font-mono font-bold shadow-sm">
-                <i class="fa-regular fa-clock"></i>
+            <div class="flex items-center space-x-2 bg-red-500 text-white px-4 py-1.5 rounded-full font-mono font-bold shadow-sm">
+                <i class="fa-solid fa-triangle-exclamation"></i>
                 <span id="timer-display">60:00</span>
             </div>
         </div>
     </header>
 
     <div class="max-w-[1600px] mx-auto flex min-h-[calc(100vh-68px)]">
-        <!-- Left Sidebar -->
         <aside class="w-80 bg-white border-r border-slate-200 p-6 flex flex-col justify-between hidden md:flex dark:bg-slate-800 dark:border-slate-700">
             <div>
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400">Question Pool (1-20)</h2>
-                    <button onclick="generateNewTestSet()" class="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-lg hover:bg-blue-100 transition dark:bg-blue-950 dark:text-blue-400">
-                        <i class="fa-solid fa-arrows-rotate mr-1"></i> New 20 Questions
+                    <h2 class="text-sm font-semibold uppercase tracking-wider text-red-500 font-mono">⚠️ Advanced Pool (1-20)</h2>
+                    <button onclick="generateNewTestSet()" class="text-xs bg-red-50 text-red-600 px-2 py-1 rounded-lg hover:bg-red-100 transition dark:bg-red-950/40 dark:text-red-400">
+                        <i class="fa-solid fa-arrows-rotate mr-1"></i> New Hard Set
                     </button>
                 </div>
                 <div id="question-grid" class="grid grid-cols-4 gap-2.5 custom-scrollbar overflow-y-auto max-h-[65vh] pr-1">
-                    <!-- Dynamic Grid Items -->
-                </div>
+                    </div>
             </div>
             
             <div class="mt-6 border-t border-slate-100 pt-6 dark:border-slate-700">
@@ -70,61 +64,56 @@
                     <span id="progress-text">0/20 Completed</span>
                 </div>
                 <div class="w-full bg-slate-100 rounded-full h-2 mb-6 dark:bg-slate-700">
-                    <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    <div id="progress-bar" class="bg-red-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
                 </div>
-                <button onclick="resetAnswersOnly()" class="w-full bg-slate-100 text-slate-600 font-medium py-2.5 rounded-xl hover:bg-red-50 hover:text-red-600 transition text-sm flex items-center justify-center space-x-2 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-red-950/40 dark:hover:text-red-400">
+                <button onclick="resetAnswersOnly()" class="w-full bg-slate-100 text-slate-600 font-medium py-2.5 rounded-xl hover:bg-slate-200 transition text-sm flex items-center justify-center space-x-2 dark:bg-slate-700 dark:text-slate-300">
                     <i class="fa-solid fa-eraser"></i>
-                    <span>Clear Current Marks</span>
+                    <span>Clear My Marks</span>
                 </button>
             </div>
         </aside>
 
-        <!-- Main Content Area -->
         <main class="flex-1 p-6 lg:p-12 flex flex-col justify-between max-w-4xl mx-auto">
             <div id="question-card" class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 mb-8 transition-all dark:bg-slate-800 dark:border-slate-700">
-                <span id="question-tag" class="inline-block bg-blue-50 text-blue-600 text-xs font-bold px-3 py-1 rounded-full mb-6 uppercase tracking-wide dark:bg-blue-950/50 dark:text-blue-400">
+                <span id="question-tag" class="inline-block bg-red-50 text-red-600 text-xs font-mono font-bold px-3 py-1 rounded-full mb-6 uppercase tracking-wide dark:bg-red-950/50 dark:text-red-400">
                     Domain loading...
                 </span>
                 
-                <!-- SVG / Graphic Renderer Block -->
                 <div id="graphic-container" class="mb-6 flex justify-center bg-slate-50 rounded-xl p-4 hidden dark:bg-slate-900/50"></div>
                 
-                <div id="question-passage" class="prose max-w-none text-slate-700 mb-6 leading-relaxed dark:text-slate-300"></div>
+                <div id="question-passage" class="prose max-w-none text-slate-700 mb-6 leading-relaxed text-base dark:text-slate-300"></div>
 
                 <p id="question-prompt" class="font-semibold text-lg mb-8 text-slate-900 dark:text-white"></p>
 
                 <div id="options-container" class="space-y-3.5 mb-8"></div>
 
-                <!-- Instant Explanation Panel -->
                 <div id="explanation-box" class="hidden mt-6 p-5 bg-emerald-50 border border-emerald-200 rounded-xl dark:bg-emerald-950/30 dark:border-emerald-800/50">
                     <div class="flex items-start space-x-3">
                         <i class="fa-solid fa-circle-check text-emerald-500 text-xl mt-0.5"></i>
                         <div>
-                            <h4 class="font-bold text-emerald-900 dark:text-emerald-400 mb-1">Answer Key & Explanation</h4>
+                            <h4 class="font-bold text-emerald-900 dark:text-emerald-400 mb-1">Elite Solution & Strategy</h4>
                             <p id="explanation-text" class="text-sm text-emerald-800 leading-relaxed dark:text-emerald-300"></p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Bottom Action Bar -->
             <div class="flex justify-between items-center">
                 <button id="btn-prev" onclick="navigateQuestion(-1)" class="px-5 py-3 rounded-xl border border-slate-200 font-medium hover:bg-slate-100 transition disabled:opacity-40 disabled:hover:bg-transparent dark:border-slate-700 dark:hover:bg-slate-700">
                     <i class="fa-solid fa-arrow-left mr-2"></i> Previous
                 </button>
                 
-                <button id="btn-reveal" onclick="toggleExplanation()" class="px-5 py-3 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 transition dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600">
-                    <i class="fa-regular fa-lightbulb mr-2"></i> Check Answer
+                <button id="btn-reveal" onclick="toggleExplanation()" class="px-5 py-3 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 transition dark:bg-slate-700 dark:text-slate-200">
+                    <i class="fa-regular fa-lightbulb mr-2"></i> Check Answer & Logic
                 </button>
 
-                <button id="btn-next" onclick="navigateQuestion(1)" class="px-5 py-3 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 shadow-md transition dark:bg-blue-500 dark:hover:bg-blue-600">
+                <button id="btn-next" onclick="navigateQuestion(1)" class="px-5 py-3 rounded-xl bg-slate-900 text-white font-medium hover:bg-slate-800 shadow-md transition dark:bg-blue-600 dark:hover:bg-blue-700">
                     Next <i class="fa-solid fa-arrow-right ml-2"></i>
                 </button>
             </div>
         </main>
     </div>
 
-    <!-- JavaScript Infinite Generator Engine -->
     <script>
         let satQuestions = [];
         let currentIndex = 0;
@@ -133,16 +122,18 @@
         let fontSizeScale = 100;
         let revealedExplanations = {};
 
-        // 문제 템플릿 마스터 뱅크 (유형별로 함수형 데이터 변수 선언)
-        const passageTemplates = [
-            { type: "reading", tag: "Reading: Information and Ideas", text: "In geopolitical ecosystems, resource distribution dynamics often change rapidly. Recent telemetry maps created by Dr. [NAME] confirm that localized micro-environments undergo distinct structural shifts, directly contradicting older static models.", prompt: "Which choice best summarizes the main perspective of the text?", optGen: (vals) => [`Recent empirical mappings challenge obsolete, static historical models.`, `Resource distributions are entirely predictable based on altitude.`, `Dr. [NAME] recommends abandoning multi-variable ecosystem tracking.`, `Older tracking frameworks are vastly superior due to simplicity.`], correct: 0 },
-            { type: "reading", tag: "Reading: Craft and Structure", text: "The ancient cryptographic formulas discovered in the lower chambers were initially believed to be corrupted beyond recovery. However, modern multi-spectral scanning revealed that the internal grid lines remained entirely ________.", prompt: "Which choice completes the text with the most precise and contextually appropriate word?", optGen: (vals) => [`pristine`, `obsolete`, `redundant`, `hazardous`], correct: 0 },
-            { type: "writing", tag: "Writing: Expression of Ideas", text: "Before modern seismic networks were fully integrated, geologists predicted continental volcanic eruptions using manually monitored hot springs. ________, today's telemetry systems instantly compute shifts in seismic velocity to warn global populations hours in advance.", prompt: "Which choice provides the most effective transition?", optGen: (vals) => [`In contrast`, `Consequently`, `For instance`, `Furthermore`], correct: 0 }
+        // 고난도 영어 오답률 Top 템플릿 데이터베이스
+        const advancedPassages = [
+            { id: "HR1", tag: "Reading: Advanced Inference (Elite)", text: "For decades, literary theorists assumed that poet Maya Lin’s selective use of archaic syntactic inverted ellipsis served to distance her audience from contemporary political struggles. However, a rigorous structuralist analysis of her 1974 manuscripts reveals that these historical cadences are explicitly juxtaposed with raw, colloquial legal transcripts of her era. This suggests that Lin’s stylistic choices, rather than conveying a detached aesthetic isolation, actually achieved a calculated ________.", prompt: "Which choice most logically completes the text with the highest contextual precision?", options: ["A) subversion of traditional historical neutrality.", "B) retreat into completely inaccessible canonical dogma.", "C) reinforcement of the status quo of contemporary lyricism.", "D) validation of the orthodox critical paradigms of her peers."], correct: 0 },
+            { id: "HR2", tag: "Reading: Command of Evidence (Complex)", text: "Ecologists have long hypothesized that sub-oceanic hydrothermal vents act as primary metabolic buffers for macro-benthic communities during global glacial events. Dr. Al-Jamil’s recent dynamic telemetry arrays verified that while certain chemosynthetic sulfur oxidizers proliferate at linear constants during extreme surface temperature drops, adjacent predatory crustacean species exhibit highly erratic, non-linear survival thresholds that correlate strictly with localized depth gradients, rather than thermal proximity.", prompt: "Which finding, if true, would most directly undermine Dr. Al-Jamil’s conclusion regarding the crustacean survival vectors?", options: ["A) Crustaceans transferred to sulfur-isolated, controlled chambers show uniform death curves regardless of pressure alterations.", "B) Thermal proximity fluctuations remain heavily integrated with macro-benthic migration routes.", "C) Chemosynthetic bacterial densities dictate the primary predatory range profiles of baseline deep-sea organisms.", "D) Localized depth gradients fluctuate relative to lunar gravitational forces rather than metabolic output."], correct: 0 },
+            { id: "HW1", tag: "Writing: Rhetorical Synthesis & Transitions", text: "Historically, algorithmic economic modeling heavily depended on the Gaussian copula framework to isolate and quantify default correlations in high-yield debt environments. ________, the unprecedented systemic cascading shocks of the 2008 fiscal contraction thoroughly exposed the absolute structural inability of these static models to process non-linear, multi-variable feedback loops.", prompt: "Which choice provides the most syntactically precise transition?", options: ["A) Inevitably", "B) Furthermore", "C) Paradoxically", "D) Conversely"], correct: 0 },
+            { id: "HR3", tag: "Reading: Craft & Complex Structure", text: "The cross-disciplinary research team led by Dr. Vance argues that the structural decay observed in late-bronze-age architectural fortifications was not a consequence of external siege mechanisms; rather, it was a systemic byproduct of shifting micro-climatic humidity matrices that accelerated the degradation of the foundational load-bearing binding mortars.", prompt: "Which choice best summarizes the core structural thesis of Dr. Vance’s research framework?", options: ["A) Fortification collapses were primarily precipitated by internal intrinsic environmental catalysts rather than external kinetic interventions.", "B) External siege operations deliberately targeted specific binding mortars to destabilize structural load capacities.", "C) Shifting micro-climatic matrices were entirely irrelevant to the longevity of ancient regional architectural designs.", "D) Late-bronze-age builders intentionally ignored micro-climatic telemetry indicators when selecting raw materials."], correct: 0 },
+            { id: "HW2", tag: "Writing: Advanced English Conventions", text: "Critical analysis of the avant-garde compositions of the mid-twentieth century demonstrates that neither the avant-garde composers nor their intensely conservative institutional sponsorship ________ prepared for the radical aesthetic rejection manifested by contemporary metropolitan concert audiences.", prompt: "Which choice completes the text according to standard high-level English conventions?", options: ["A) was", "B) were", "C) are", "D) have been"], correct: 0 }
         ];
 
         window.addEventListener('DOMContentLoaded', () => {
             applySavedTheme();
-            const savedState = localStorage.getItem('sat_infinite_state');
+            const savedState = localStorage.getItem('sat_hard_state');
             if (savedState) {
                 loadProgress(savedState);
             } else {
@@ -151,93 +142,117 @@
             startTimer();
         });
 
-        // 🧠 핵심: 고정된 문제 대신 실행 순간 수학 변수와 지문을 자동 다변화하여 20문제를 실시간 보정 조립
+        // 🧠 핵심: Section 2 Hard Module 급 초고난도 문제 생성 장치
         function buildRandom20Questions() {
             satQuestions = [];
             userAnswers = {};
             revealedExplanations = {};
             currentIndex = 0;
 
-            const namesPool = ["Vance", "Sabur", "Gomez", "Chen", "Al-Jamil", "Evelyn", "Hwang"];
+            let usedPassageIds = new Set();
+            let usedMathValues = new Set();
 
             for (let i = 1; i <= 20; i++) {
-                // 홀수 문항은 수학(Math/Geometry), 짝수 문항은 독해/문법(Reading/Writing)으로 균형 배치
+                // 1. 고난도 수학 문항 설계 (홀수 번호)
                 if (i % 2 === 1) {
-                    const mathType = Math.floor(Math.random() * 4);
-                    if (mathType === 0) {
-                        // 직각삼각형 피타고라스 유형 생성
-                        const mult = Math.floor(Math.random() * 3) + 1;
-                        const a = 3 * mult, b = 4 * mult, c = 5 * mult;
-                        satQuestions.push({
-                            id: i,
-                            tag: "Math: Geometry (Right Triangles)",
-                            graphic: `<svg width="180" height="120" viewBox="0 0 180 120" class="stroke-slate-800 dark:stroke-slate-200 fill-none stroke-2"><polygon points="40,20 40,100 150,100" /><rect x="40" y="90" width="10" height="10" /><text x="15" y="65" class="fill-current stroke-none text-xs">${a}</text><text x="90" y="115" class="fill-current stroke-none text-xs">x = ${b}</text><text x="100" y="55" class="fill-current stroke-none text-xs">Hypotenuse</text></svg>`,
-                            passage: `In the right triangle shown above, the vertical leg is $${a}$ and the base is $x = ${b}$.`,
-                            prompt: "What is the length of the hypotenuse side?",
-                            options: [`A. ${c}`, `B. ${c+2}`, `C. ${a+b}`, `D. ${c*1.5}`],
-                            correct: 0,
-                            explanation: `Correct answer: <b>A</b>. According to the Pythagorean Theorem: $a^2 + b^2 = c^2 \\rightarrow ${a}^2 + ${b}^2 = ${a*a} + ${b*b} = ${c*c}$. Taking the square root gives $\\sqrt{${c*c}} = ${c}$.`
-                        });
-                    } else if (mathType === 1) {
-                        // 원과 호의 길이 유형 생성
-                        const r = (Math.floor(Math.random() * 4) + 2) * 2; // 4, 6, 8, 10
-                        const angle = 120;
-                        const arcLengthStr = `${r * 2 / 3}\\pi`;
-                        satQuestions.push({
-                            id: i,
-                            tag: "Math: Geometry (Circles & Arcs)",
-                            graphic: `<svg width="140" height="140" viewBox="0 0 140 140" class="stroke-slate-800 dark:stroke-slate-200 fill-none stroke-2"><circle cx="70" cy="70" r="50" /><line x1="70" y1="70" x2="70" y2="20" /><line x1="70" y1="70" x2="113" y2="95" /><text x="75" y="50" class="fill-current stroke-none text-xs">${angle}°</text><text x="90" y="85" class="fill-current stroke-none text-xs">r = ${r}</text></svg>`,
-                            passage: `A circle centered at $O$ has a radius of $r = ${r}$ and an intercepted central angle of $${angle}^\\circ$.`,
-                            prompt: "What is the length of the minor arc created by this angle?",
-                            options: [`A. $${r}\\pi$`, `B. $${arcLengthStr}$`, `C. $${r*2}\\pi$`, `D. $4\\pi$`],
-                            correct: 1,
-                            explanation: `Correct answer: <b>B</b>. Arc length formula: $\\frac{\\theta}{360} \\times 2\\pi r \\rightarrow \\frac{120}{360} \\times 2\\pi(${r}) = \\frac{1}{3} \\times ${r*2}\\pi = ${arcLengthStr}$.`
-                        });
-                    } else if (mathType === 2) {
-                        // 직사각형 대각선 구조 자동 생성
-                        const w = (Math.floor(Math.random() * 3) + 2) * 2; // 4, 6, 8
-                        const h = w + 2;
-                        const diagSq = (w*w) + (h*h);
-                        satQuestions.push({
-                            id: i,
-                            tag: "Math: Geometry (Advanced Rectangles)",
-                            graphic: `<svg width="180" height="110" viewBox="0 0 180 110" class="stroke-slate-800 dark:stroke-slate-200 fill-none stroke-2"><rect x="30" y="20" width="120" height="70" /><line x1="30" y1="20" x2="150" y2="90" /><text x="90" y="15" class="fill-current stroke-none text-xs">width = ${w}</text><text x="155" y="60" class="fill-current stroke-none text-xs">${h}</text></svg>`,
-                            passage: `A standard dynamic rectangle has dimensions of width $w = ${w}$ and height $h = ${h}$.`,
-                            prompt: "What is the exact straight length of the interior diagonal vector?",
-                            options: [`A. $\\sqrt{${diagSq}}$`, `B. ${w+h}`, `C. $\\sqrt{${w*h}}$`, `D. ${diagSq}`],
-                            correct: 0,
-                            explanation: `Correct answer: <b>A</b>. The diagonal creates a right triangle. By the Pythagorean formula, $\\text{Diagonal} = \\sqrt{w^2 + h^2} = \\sqrt{${w}^2 + ${h}^2} = \\sqrt{${w*w} + ${h*h}} = \\sqrt{${diagSq}}$.`
-                        });
-                    } else {
-                        // 대수 선형 방정식 조건문 자동생성
-                        const constant = Math.floor(Math.random() * 15) + 5;
-                        satQuestions.push({
-                            id: i,
-                            tag: "Math: Algebra (Linear Equations)",
-                            passage: `Consider the linear function representation: $$4x - 7 = 2x + ${constant}$$`,
-                            prompt: "What is the true calculated value of variables $x$?",
-                            options: [`A. ${(constant+7)/2}`, `B. ${constant}`, `C. ${constant - 7}`, `D. ${(constant+7)}`],
-                            correct: 0,
-                            explanation: `Correct answer: <b>A</b>. Subtract $2x$ from both sides: $2x - 7 = ${constant}$. Add 7: $2x = ${constant + 7}$. Divide by 2: $x = ${(constant+7)/2}$.`
-                        });
+                    let mathType = Math.floor(Math.random() * 4);
+                    let uniqueFound = false;
+                    let safetyCounter = 0;
+
+                    while (!uniqueFound && safetyCounter < 50) {
+                        safetyCounter++;
+                        let seed = Math.floor(Math.random() * 5) + 2; // 2~6 난수 변동자
+                        let mathKey = `${mathType}_${seed}`;
+
+                        if (!usedMathValues.has(mathKey)) {
+                            usedMathValues.add(mathKey);
+                            uniqueFound = true;
+
+                            if (mathType === 0) {
+                                // [수학 킬러유형 1] 이차함수와 판별식 조건 (No Real Solutions)
+                                const cVal = seed * 4; 
+                                const kMax = Math.floor((cVal * 4) / 4); 
+                                satQuestions.push({
+                                    id: i, tag: "Math: Advanced Algebra (Quadratic Systems)",
+                                    passage: `In the given quadratic function equation system, $k$ is a constant: \n $$7x^2 - 4x + k = 3x^2 + ${cVal}$$`,
+                                    prompt: "If the given equation has <b>no real solutions</b>, which of the following could be the exact value of $k$?",
+                                    options: [`A) ${cVal + 2}`, `B) ${cVal - 5}`, `C) 0`, `D) -1`], correct: 0,
+                                    explanation: `Correct answer: <b>A</b>.<br>First, combine terms into standard form $4x^2 - 4x + (k - ${cVal}) = 0$.<br>For the equation to have no real solutions, the Discriminant ($D = b^2 - 4ac$) must be strictly less than 0.<br>$D = (-4)^2 - 4(4)(k - ${cVal}) < 0 \\rightarrow 16 - 16(k - ${cVal}) < 0 \\rightarrow 1 < k - ${cVal} \\rightarrow k > ${cVal + 1}$.<br>Therefore, only choice A ($${cVal + 2}$$) satisfies this dynamic threshold restriction.`
+                                });
+                            } else if (mathType === 1) {
+                                // [수학 킬러유형 2] 원의 방정식 표준형 변환 + 삼각비 결합
+                                const h = seed;
+                                const k = seed + 2;
+                                const r = seed * 2;
+                                const rSq = r * r;
+                                const xCoeff = -2 * h;
+                                const yCoeff = -2 * k;
+                                const constantTerm = (h*h) + (k*k) - rSq;
+                                
+                                satQuestions.push({
+                                    id: i, tag: "Math: Advanced Geometry (Coordinate Circles)",
+                                    passage: `An equation of a circle in the $xy$-plane is given by: \n $$x^2 + y^2 ${xCoeff > 0 ? '+' : ''}${xCoeff}x ${yCoeff > 0 ? '+' : ''}${yCoeff}y = ${-constantTerm}$$`,
+                                    prompt: "What is the exact calculated radius $r$ of this circle?",
+                                    options: [`A) ${r}`, `B) ${rSq}`, `C) ${h}`, `D) $\\sqrt{${h+k}}$`], correct: 0,
+                                    explanation: `Correct answer: <b>A</b>.<br>Convert the equation to standard form $(x-h)^2 + (y-k)^2 = r^2$ by completing the square:<br>$(x^2 ${xCoeff}x + ${h*h}) + (y^2 ${yCoeff}y + ${k*k}) = ${-constantTerm} + ${h*h} + ${k*k}$.<br>Simplifying the right side yields exactly $r^2 = ${rSq}$. Taking the square root gives radius $r = ${r}$.`
+                                });
+                            } else if (mathType === 2) {
+                                // [수학 킬러유형 3] 복합 지수 방정식 연립계산
+                                const valBase = seed;
+                                const powerAns = 3;
+                                const rightSide = Math.pow(valBase, 6);
+                                satQuestions.push({
+                                    id: i, tag: "Math: Passport to Advanced Math (Exponential Systems)",
+                                    passage: `Consider the high-level exponential equation system: \n $$(${valBase}^{2x-1})^{3} = ${rightSide}$$`,
+                                    prompt: "What is the real value of the variable configuration $x$?",
+                                    options: [`A) 1.5`, `B) 3`, `C) ${valBase}`, `D) 0.5`], correct: 0,
+                                    explanation: `Correct answer: <b>A</b>.<br>Apply the exponent power rule: $(${valBase}^{2x-1})^3 = ${valBase}^{3(2x-1)} = ${valBase}^{6x-3}$.<br>Equate the exponents since the bases match: $6x - 3 = 6$.<br>Solve for $x$: $6x = 9 \\rightarrow x = \\frac{9}{6} = 1.5$.`
+                                });
+                            } else {
+                                // [수학 킬러유형 4] 삼각함수 복합 호의 성질
+                                const angleRad = seed * 15; // 30, 45, 60, 75
+                                satQuestions.push({
+                                    id: i, tag: "Math: Geometry & Trigonometry",
+                                    passage: `In a right triangle, $\\sin(x^\\circ) = \\frac{${seed}}{\\sqrt{${seed*seed + 16}}}$.`,
+                                    prompt: `What is the exact functional calculation value of $\\cos(90^\\circ - x^\\circ)$?`,
+                                    options: [`A) $\\frac{${seed}}{\\sqrt{${seed*seed + 16}}}$`, `B) $\\frac{4}{\\sqrt{${seed*seed + 16}}}$`, `C) $\\frac{1}{${seed}}$`, `D) 1`], correct: 0,
+                                    explanation: `Correct answer: <b>A</b>.<br>By the fundamental trigonometric co-function identity rule, $\\cos(90^\\circ - x^\\circ) = \\sin(x^\\circ)$ for all complementary angles.<br>Therefore, the value remains absolutely identical to the given input.`
+                                });
+                            }
+                        }
                     }
-                } else {
-                    // 영문 독해/문법 지문 템플릿에 무작위 인명과 가변구조 셔플 조합
-                    const temp = passageTemplates[Math.floor(Math.random() * passageTemplates.length)];
-                    const randomName = namesPool[Math.floor(Math.random() * namesPool.length)];
-                    const parsedPassage = temp.text.replace("[NAME]", randomName);
+                } 
+                // 2. 고난도 영어 문항 설계 (짝수 번호)
+                else {
+                    let uniqueTemplate = null;
+                    const hardShuffled = [...advancedPassages].sort(() => Math.random() - 0.5);
                     
+                    for (let t of hardShuffled) {
+                        if (!usedPassageIds.has(t.id)) {
+                            uniqueTemplate = t;
+                            usedPassageIds.add(t.id);
+                            break;
+                        }
+                    }
+
+                    if (!uniqueTemplate) {
+                        usedPassageIds.clear();
+                        uniqueTemplate = hardShuffled[0];
+                        usedPassageIds.add(uniqueTemplate.id);
+                    }
+
                     satQuestions.push({
                         id: i,
-                        tag: temp.tag,
-                        passage: parsedPassage,
-                        prompt: temp.prompt,
-                        options: temp.optGen(),
-                        correct: temp.correct,
-                        explanation: temp.correct === 0 ? "Correct answer: <b>A</b>. This choice aligns perfectly with the positive contextual transition cues provided within the text flow." : "Correct answer choice provides maximum grammatical logic."
+                        tag: uniqueTemplate.tag,
+                        passage: uniqueTemplate.text,
+                        prompt: uniqueTemplate.prompt,
+                        options: uniqueTemplate.options,
+                        correct: uniqueTemplate.correct,
+                        explanation: uniqueTemplate.explanation
                     });
                 }
             }
+
             saveProgress();
             renderSidebar();
             displayQuestion();
@@ -251,15 +266,6 @@
             document.getElementById('question-passage').innerHTML = q.passage;
             document.getElementById('question-prompt').innerHTML = q.prompt;
 
-            // Graphic Parsing logic
-            const graphicContainer = document.getElementById('graphic-container');
-            if (q.graphic) {
-                graphicContainer.innerHTML = q.graphic;
-                graphicContainer.classList.remove('hidden');
-            } else {
-                graphicContainer.classList.add('hidden');
-            }
-
             const container = document.getElementById('options-container');
             container.innerHTML = '';
             
@@ -268,7 +274,7 @@
                 const optButton = document.createElement('button');
                 optButton.className = `w-full text-left p-4 rounded-xl border transition flex items-center space-x-4 group ${
                     isSelected 
-                    ? 'border-blue-600 bg-blue-50/50 dark:border-blue-500 dark:bg-blue-950/30' 
+                    ? 'border-red-600 bg-red-50/40 dark:border-red-500 dark:bg-red-950/20' 
                     : 'border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50'
                 }`;
                 optButton.onclick = () => selectOption(idx);
@@ -277,10 +283,10 @@
                 optButton.innerHTML = `
                     <span class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm transition ${
                         isSelected 
-                        ? 'bg-blue-600 text-white' 
+                        ? 'bg-red-600 text-white' 
                         : 'bg-slate-100 text-slate-600 group-hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300'
-                    }">${prefix}</span>
-                    <span class="font-medium">${opt}</span>
+                    }">${opt.substring(0,2)}</span>
+                    <span class="font-medium">${opt.substring(3)}</span>
                 `;
                 container.appendChild(optButton);
             });
@@ -337,12 +343,12 @@
                 const isAnswered = userAnswers[q.id] !== undefined;
                 
                 const gridItem = document.createElement('button');
-                gridItem.className = `h-11 w-11 rounded-xl font-bold text-xs transition flex items-center justify-center border ${
+                gridItem.className = `h-11 w-11 rounded-xl font-mono font-bold text-xs transition flex items-center justify-center border ${
                     isCurrent 
-                    ? 'border-blue-600 text-blue-600 ring-2 ring-blue-600/20 dark:border-blue-400 dark:text-blue-400' 
+                    ? 'border-red-500 text-red-500 ring-2 ring-red-500/20 dark:border-red-400 dark:text-red-400' 
                     : isAnswered 
-                    ? 'bg-blue-600 border-blue-600 text-white dark:bg-blue-500 dark:border-blue-500' 
-                    : 'border-slate-200 text-slate-400 hover:border-slate-400 dark:border-slate-700 dark:text-slate-500'
+                    ? 'bg-red-500 border-red-500 text-white' 
+                    : 'border-slate-200 text-slate-400 dark:border-slate-700 dark:text-slate-500'
                 }`;
                 gridItem.innerText = q.id;
                 gridItem.onclick = () => jumpToQuestion(idx);
@@ -356,7 +362,7 @@
             const total = satQuestions.length;
             const percentage = total > 0 ? (completedCount / total) * 100 : 0;
 
-            document.getElementById('progress-text').innerText = `${completedCount}/${total} Completed`;
+            document.getElementById('progress-text').innerText = `${completedCount}/${total} Answered`;
             document.getElementById('progress-bar').style.width = `${percentage}%`;
         }
 
@@ -384,11 +390,11 @@
         function toggleDarkMode() {
             const isDark = document.documentElement.classList.toggle('dark');
             document.getElementById('theme-icon').className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
-            localStorage.setItem('sat_dark_mode', isDark);
+            localStorage.setItem('sat_hard_dark_mode', isDark);
         }
 
         function applySavedTheme() {
-            if (localStorage.getItem('sat_dark_mode') === 'true') {
+            if (localStorage.getItem('sat_hard_dark_mode') === 'true') {
                 document.documentElement.classList.add('dark');
                 document.getElementById('theme-icon').className = "fa-solid fa-sun";
             }
@@ -396,7 +402,7 @@
 
         function saveProgress() {
             const state = { satQuestions, userAnswers, currentIndex, timeRemaining, fontSizeScale, revealedExplanations };
-            localStorage.setItem('sat_infinite_state', JSON.stringify(state));
+            localStorage.setItem('sat_hard_state', JSON.stringify(state));
         }
 
         function loadProgress(saved) {
@@ -418,13 +424,14 @@
         }
 
         function generateNewTestSet() {
-            if (confirm("현재 답안을 지우고 완전히 새로운 수학 변수와 영어 지문으로 20문제를 재생성할까요?")) {
+            if (confirm("새로운 무작위 고난도(Hard Module) 문제셋을 배치할까요?")) {
                 buildRandom20Questions();
             }
         }
 
+        // 마킹 지우기
         function resetAnswersOnly() {
-            if (confirm("문제는 그대로 두고 마킹한 기록만 지울까요?")) {
+            if (confirm("답안 기록만 리셋하고 이 챌린지 세트를 다시 풀까요?")) {
                 userAnswers = {};
                 revealedExplanations = {};
                 saveProgress();
